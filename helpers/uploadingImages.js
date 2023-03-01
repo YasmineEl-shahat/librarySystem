@@ -1,3 +1,5 @@
+const multer = require("multer");
+const path = require("path");
 module.exports = function uploadImage(route) {
   const storage = multer.diskStorage({
     destination: (request, file, cb) => {

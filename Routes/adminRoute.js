@@ -1,7 +1,5 @@
 // **************************** imports *******************************
 const express = require("express");
-const multer = require("multer");
-const path = require("path");
 const validateMW = require("../Core/validations/validateMW");
 const controller = require("../Controller/adminContoller");
 const validatePostArray =
