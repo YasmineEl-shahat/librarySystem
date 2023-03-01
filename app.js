@@ -4,8 +4,9 @@ const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-const loginRoute = require("./Routes/login");
 const authenticationMW = require("./Core/auth/authenticationMW");
+const loginRoute = require("./Routes/login");
+const amdinRoute = require("./Routes/adminRoute");
 //  open server using express
 const server = express(); // create http server -> http.createServer()
 
@@ -53,17 +54,19 @@ morgan(function (tokens, request, res) {
 server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
 
-//Routes
+// login Route
 server.use(loginRoute);
-//auth middleware
+// auth middleware
 server.use(authenticationMW);
+// Routes
+server.use(amdinRoute);
 
 // not found middleware
 server.use((request, response, next) => {
   response.status(404).json({ message: "page not found" });
 });
 
-//error middleware
+// error middleware
 server.use((error, request, response, next) => {
   let status = error.status || 500;
   response.status(status).json({ message: error + "" });
