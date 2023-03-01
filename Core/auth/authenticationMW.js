@@ -2,6 +2,12 @@ const { request, response } = require("express");
 const jwt = require("jsonwebtoken");
 
 let sk = process.env.SECRET_KEY || "SK";
+
+function NotAuthorized() {
+  let error = new Error("Not Authorized");
+  error.status = 401;
+  next(error);
+}
 module.exports = (request, response, next) => {
   try {
     let token = request.get("authorization").split(" ")[1];
@@ -18,18 +24,10 @@ module.exports = (request, response, next) => {
 module.exports.checkBaseAdmin = (request, response, next) => {
   if (request.role == "badmin") {
     next();
-  } else {
-    let error = new Error("Not Authorized");
-    error.status = 401;
-    next(error);
-  }
+  } else NotAuthorized();
 };
 module.exports.checkAdmin = (request, response, next) => {
   if (request.role == "admin") {
     next();
-  } else {
-    let error = new Error("Not Authorized");
-    error.status = 401;
-    next(error);
-  }
+  } else NotAuthorized();
 };

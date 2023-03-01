@@ -1,7 +1,7 @@
 // **************************** imports *******************************
 const express = require("express");
 const validateMW = require("../Core/validations/validateMW");
-const controller = require("../Controller/adminContoller");
+const controller = require("../Controller/adminController");
 const validatePostArray =
   require("../Core/adminValidationArray").validatePostArray;
 const validatePatchArray =
