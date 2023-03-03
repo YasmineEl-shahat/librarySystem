@@ -71,7 +71,7 @@ server.use((request, response, next) => {
 
 // error middleware
 server.use((error, request, response, next) => {
-  fs.unlinkSync(request.file.path);
+  // fs.unlinkSync(request.file.path);
   let status = error.status || 500;
   response.status(status).json({ message: error + "" });
 });

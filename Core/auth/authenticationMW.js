@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 let sk = process.env.SECRET_KEY || "SK";
 
-function NotAuthorized() {
+function NotAuthorized(next) {
   let error = new Error("Not Authorized");
   error.status = 401;
   next(error);
@@ -24,10 +24,10 @@ module.exports = (request, response, next) => {
 module.exports.checkBaseAdmin = (request, response, next) => {
   if (request.role == "badmin") {
     next();
-  } else NotAuthorized();
+  } else NotAuthorized(next);
 };
 module.exports.checkAdmin = (request, response, next) => {
   if (request.role == "admin") {
     next();
-  } else NotAuthorized();
+  } else NotAuthorized(next);
 };
