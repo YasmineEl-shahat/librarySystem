@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const fs=require("fs");
 
 const authenticationMW = require("./Core/auth/authenticationMW");
 const loginRoute = require("./Routes/login");
@@ -68,6 +69,7 @@ server.use((request, response, next) => {
 
 // error middleware
 server.use((error, request, response, next) => {
+  fs.unlinkSync(request.file.path);
   let status = error.status || 500;
   response.status(status).json({ message: error + "" });
 });
