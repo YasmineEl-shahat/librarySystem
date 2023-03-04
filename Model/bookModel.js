@@ -15,5 +15,5 @@ const schema = new mongoose.Schema({
   shelfNo:{type:Number,required:true}
 });
 
-schema.plugin(AutoIncrement);
+// schema.plugin(AutoIncrement);
 mongoose.model("books", schema);
