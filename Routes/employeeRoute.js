@@ -14,7 +14,7 @@ router.route("/employee")
 .all(checkBaseAdmin)
 .get(controller.getAllEmployee)
 .post(upload.single("image"),validatePostArray,validateMW,controller.addEmployee)
-.patch(upload.single("image"),validatePatchArray,validateMW,controller.addEmployee)
+.patch(upload.single("image"),validatePatchArray,validateMW,controller.updateEmployee)
 .delete(validateDelArray,validateMW,controller.deleteEmployee)
 
 
