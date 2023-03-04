@@ -15,5 +15,5 @@ const schema = new mongoose.Schema({
   shelfNo:{type:Number,required:true}
 });
 
-// schema.plugin(AutoIncrement);
+schema.plugin(AutoIncrement,{id :"book_id" , inc_field:"_id"});
 mongoose.model("books", schema);

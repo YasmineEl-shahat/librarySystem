@@ -28,5 +28,5 @@ const schema = new mongoose.Schema({
   timestamps:true
 });
 
-// schema.plugin(AutoIncrement);
+schema.plugin(AutoIncrement,{id :"member_id" , inc_field:"_id"});
 mongoose.model("members", schema);

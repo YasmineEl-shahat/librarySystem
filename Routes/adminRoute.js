@@ -19,7 +19,7 @@ const upload = uploadImage("admins");
 // **************************** routes *******************************
 router
   .route("/admins")
-  .all(checkBaseAdmin, checkAdmin)
+  .all(checkBaseAdmin)
   .get(controller.getAllAdmins)
   .post(
     upload.single("image"),

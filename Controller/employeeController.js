@@ -29,16 +29,40 @@ exports.addEmployee = (request , response , next)=>{
         .then(data => response.status(201).json({data}))
         .catch(error => next(error))
     }
-    
-
-
 exports.updateEmployee = (request , response , next)=>{
     let hash = bcrypt.hashSync(request.body.password, saltRounds)
+    //update with role admin
+    console.log(request.role,"teeeeeeeeeest");
+    if(request.role == "admin" ){
+        employeeSchema.updateOne(
+            {_id: request.body._id},
+            { 
+                $set: {
+                    fname:request.body.fname,
+                    lname:request.body.lname,
+                    email:request.body.email,
+                    password:hash,
+                    salary: request.body.salary,
+                    birthdate: request.body.birthdate,
+                    hiredate: request.body.hiredate,
+                    image: request.file?.path ? request.file.path : ""
+                }
+            }
+        ).then( (data) => {
+            if(data.matchedCount == 0)
+                next(new Error("employee not found for update"))
+            else response.status(200).json({data})
+        })
+        .catch(error => next(error))
+    }
+    //update with role employee
+    else if (request.role == "employee"){
     if(request.body.email !=null){
         next(new Error("you can't update your email "));
     }
     else if(request.body.hiredate !=null){
-     next(new Error("you can't update your hiredate "));}
+        next(new Error("you can't update your hiredate "));
+    }
     else if(request.body.salary !=null){
         next(new Error("you can't update your salary "));
     }
@@ -65,6 +89,10 @@ exports.updateEmployee = (request , response , next)=>{
     .catch(error => next(error))
 }
 }
+else {
+    next(Error);
+}
+}
 
 exports.deleteEmployee = (request,response,next)=>{
     employeeSchema.deleteOne( {_id:request.body._id })
@@ -74,5 +102,3 @@ exports.deleteEmployee = (request,response,next)=>{
         else response.status(200).json({data})
     }).catch(error => next(error))
 }
-
-/***********************nabila************** */

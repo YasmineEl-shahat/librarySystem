@@ -34,10 +34,20 @@ module.exports.checkAdmin = (request, response, next) => {
 module.exports.checkAdminOrBadmin = (request, response, next) => {
 
   console.log(request.role)
-  if ((request.role == "admin" &&   request.id == request.body._id)|| request.role == "badmin" ) {
+  if ((request.role == "admin" &&   request.id == request.body._id) || request.role == "badmin" ) {
     next();
   } else NotAuthorized(next);
 };
+
+module.exports.employeeOrAdmin = (request, response, next) => {
+  console.log(request.role)
+  console.log(request.id)
+  console.log(request.body._id);
+  if(request.role == "admin"  || (request.role == "employee"  && request.id == request.body._id) )  {
+    next();
+  } else NotAuthorized(next);
+};
+
 
 
 

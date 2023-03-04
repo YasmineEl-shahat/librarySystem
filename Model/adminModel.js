@@ -17,5 +17,5 @@ const schema = new mongoose.Schema({
   image: String,
 });
 
-schema.plugin(AutoIncrement);
+schema.plugin(AutoIncrement,{id :"admin_id" , inc_field:"_id"});
 mongoose.model("admins", schema);

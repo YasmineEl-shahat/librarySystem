@@ -15,17 +15,18 @@ exports.login = async(request, response, next) => {
 
   else {
 
-    console.log(request.body.username)
-    console.log(request.body.password)
+    // console.log(request.body.username)
+    // console.log(request.body.password)
     let admin = await  adminSchema.findOne({fname:request.body.username , password:request.body.password})
     let employee = await employeeSchema.findOne({fname:request.body.username , password:request.body.password})
-    console.log(admin)
-    console.log(employee)
+    // console.log(admin)
+    // console.log(employee)
     if(admin){
       let token = jwt.sign({ id: admin._id, role: "admin" }, sk, { expiresIn: "3h" });
       response.status(200).json({ message: "Authenticated", token });
     }
     else if(employee ){
+      console.log(employee)
       let token = jwt.sign({ id: employee._id, role: "employee" }, sk, { expiresIn: "3h" });
       response.status(200).json({ message: "Authenticated", token });
     }

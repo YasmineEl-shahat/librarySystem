@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 exports.validatePostArray = [
-  body("_id").isInt().withMessage("admin id should be integer"),
+  body("_id").optional().isInt().withMessage("admin id should be integer"),
   body("fname")
     .isString()
     .withMessage("admin first name should be string")
