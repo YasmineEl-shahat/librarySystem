@@ -27,6 +27,3 @@ const schema = new mongoose.Schema({
 {
   timestamps:true
 });
-
-// schema.plugin(AutoIncrement);
-mongoose.model("members", schema);

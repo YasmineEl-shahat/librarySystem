@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+// const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const schema = new mongoose.Schema({
   _id: Number,
@@ -17,5 +17,5 @@ const schema = new mongoose.Schema({
   image: String,
 });
 
-schema.plugin(AutoIncrement);
+// schema.plugin(AutoIncrement);
 mongoose.model("employees", schema);

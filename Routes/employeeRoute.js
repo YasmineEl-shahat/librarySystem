@@ -2,7 +2,7 @@ const express =require("express")
 const controller = require("./../Controller/employeeController")
 const {checkBaseAdmin,checkAdmin,} = require("./../Core/auth/authenticationMW");
 const validateMW = require("./../Core/validations/validateMW")
-const authenticationMW = require("./../Core/auth/authenticationMW")
+// const authenticationMW = require("./../Core/auth/authenticationMW")
 const {validateDelArray,validatePatchArray,validatePostArray}= require("./../Core/employeeValidationArray")
 const uploadImage = require("../helpers/uploadingImages");
 // upload image
