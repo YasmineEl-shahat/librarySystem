@@ -10,10 +10,11 @@ const upload = uploadImage("employee");
 const router = express.Router();
 
 router.route("/employee")
-.get(checkAdminOrBadmin,controller.getAllEmployee)
-.post(checkAdminOrBadmin,upload.single("image"),validatePostArray,validateMW,controller.addEmployee)
-.patch(checkBadminOrAdminOrEmployee,upload.single("image"),validatePatchArray,validateMW,controller.updateEmployee)
-.delete(checkAdminOrBadmin,validateDelArray,validateMW,controller.deleteEmployee)
+.all(checkBaseAdmin)
+.get(controller.getAllEmployee)
+.post(upload.single("image"),validatePostArray,validateMW,controller.addEmployee)
+.patch(upload.single("image"),validatePatchArray,validateMW,controller.updateEmployee)
+.delete(validateDelArray,validateMW,controller.deleteEmployee)
 
 
 

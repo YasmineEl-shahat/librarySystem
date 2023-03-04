@@ -4,11 +4,13 @@ const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const fs=require("fs");
+const fs=require("fs");
 
 const authenticationMW = require("./Core/auth/authenticationMW");
 const loginRoute = require("./Routes/login");
 const amdinRoute = require("./Routes/adminRoute");
 const employeeRoute = require("./Routes/employeeRoute");
+const memberRoute = require("./Routes/memberRoute")
 //  open server using express
 const server = express(); // create http server -> http.createServer()
 
@@ -63,6 +65,7 @@ server.use(authenticationMW);
 // Routes
 server.use(amdinRoute);
 server.use(employeeRoute);
+server.use(memberRoute);
 
 // not found middleware
 server.use((request, response, next) => {

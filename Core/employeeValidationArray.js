@@ -22,7 +22,7 @@ exports.validatePostArray = [
   body("hiredate").isDate().withMessage("invalid hire date"),
 ];
 exports.validatePatchArray = [
-  body("_id").isInt().withMessage("Employee id should be an integer"),
+    body("_id").isInt().withMessage("Employee id should be an integer"),
   body("fname")
     .optional()
     .isString()
