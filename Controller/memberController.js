@@ -106,4 +106,3 @@ exports.deleteMember=async (request,response,next)=>{
         next(error)
     }
 }
-

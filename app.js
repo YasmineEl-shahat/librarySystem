@@ -9,7 +9,8 @@ const authenticationMW = require("./Core/auth/authenticationMW");
 const loginRoute = require("./Routes/login");
 const amdinRoute = require("./Routes/adminRoute");
 const employeeRoute = require("./Routes/employeeRoute");
-const memberRoute = require("./Routes/memberRoute")
+const memberRoute = require("./Routes/memberRoute");
+const bookRoute = require("./Routes/bookRoute")
 //  open server using express
 const server = express(); // create http server -> http.createServer()
 
@@ -65,6 +66,7 @@ server.use(authenticationMW);
 server.use(amdinRoute);
 server.use(employeeRoute);
 server.use(memberRoute);
+server.use(bookRoute);
 
 // not found middleware
 server.use((request, response, next) => {
