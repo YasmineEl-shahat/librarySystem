@@ -20,6 +20,9 @@ const schema = new mongoose.Schema({
   fullAddress: { city:String,street:String,building:Number },
   //createdAt:{type:Date,required:true},
   image: String,
+},
+{
+  timestamps:true
 });
 
 schema.plugin(AutoIncrement,{id :"member_id" , inc_field:"_id"});
