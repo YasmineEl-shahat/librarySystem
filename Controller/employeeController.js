@@ -2,6 +2,8 @@ const { request, response } = require("express");
 const mongoose = require("mongoose")
 require("./../Model/employeeModel")
 const bcrypt = require("bcrypt")
+// Delete Image
+const fs = require("fs")
 
 const employeeSchema = mongoose.model("employees");
 
@@ -29,10 +31,27 @@ exports.addEmployee = (request , response , next)=>{
         .then(data => response.status(201).json({data}))
         .catch(error => next(error))
     }
-exports.updateEmployee = (request , response , next)=>{
-    let hash = bcrypt.hashSync(request.body.password, saltRounds)
-    //update with role admin
-    console.log(request.role,"teeeeeeeeeest");
+
+
+
+exports.updateEmployee = async (request , response , next)=>{
+    // let hash = bcrypt.hashSync(request.body.password, saltRounds)
+
+    // delete image from server
+    try{
+        let employee=await employeeSchema.findOne({_id:request.body._id},{image:1,_id:0})
+        console.log("path: " , employee.image)
+        if(employee)
+        {
+            const pathToImg = employee.image;
+            fs.unlinkSync(pathToImg);
+        }
+    }
+    catch(error){
+        next(new Error("image not found " ))
+    }
+
+     //update with role admin
     if(request.role == "admin" ){
         employeeSchema.updateOne(
             {_id: request.body._id},
@@ -41,7 +60,7 @@ exports.updateEmployee = (request , response , next)=>{
                     fname:request.body.fname,
                     lname:request.body.lname,
                     email:request.body.email,
-                    password:hash,
+                    // password:hash,
                     salary: request.body.salary,
                     birthdate: request.body.birthdate,
                     hiredate: request.body.hiredate,
@@ -73,11 +92,8 @@ exports.updateEmployee = (request , response , next)=>{
             $set: {
                 fname:request.body.fname,
                 lname:request.body.lname,
-                // email:request.body.email,
-                password:hash,
-                // salary: request.body.salary,
+                // password:hash,
                 birthdate: request.body.birthdate,
-                // hiredate: request.body.hiredate,
                 image: request.file?.path ? request.file.path : ""
             }
         }
@@ -94,11 +110,30 @@ else {
 }
 }
 
-exports.deleteEmployee = (request,response,next)=>{
-    employeeSchema.deleteOne( {_id:request.body._id })
-    .then( (data) =>{
-        if(data.deletedCount ==0)
-            next(new Error("employee not found for delete"))
-        else response.status(200).json({data})
-    }).catch(error => next(error))
+exports.deleteEmployee=async (request,response,next)=>{
+    try{
+        let employee=await employeeSchema.findOne({_id:request.body._id},{image:1,_id:0})
+        if(employee)
+        {
+            const pathToImg = employee.image;
+            fs.unlinkSync(pathToImg);
+        }
+       
+        
+        employeeSchema.deleteOne({
+            _id:request.body._id
+        }).then(data=>{
+            if(data.deletedCount==0)
+            {
+                next(new Error("employee not found"));
+            }
+            else
+                response.status(200).json({data:"deleted"});
+                console.log(data)
+        })
+       
+    }
+    catch(error){
+        next(error)
+    }
 }

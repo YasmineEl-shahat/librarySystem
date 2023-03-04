@@ -11,8 +11,8 @@ const router = express.Router();
 
 router.route("/employee")
 .get(checkAdminOrBadmin,controller.getAllEmployee)
-.post(checkBadminOrAdminOrEmployee,checkAdminOrBadmin,upload.single("image"),validatePostArray,validateMW,controller.addEmployee)
-.patch(employeeOrAdmin,upload.single("image"),validatePatchArray,validateMW,controller.updateEmployee)
+.post(upload.single("image"),checkAdminOrBadmin,validatePostArray,validateMW,controller.addEmployee)
+.patch(upload.single("image"),checkBadminOrAdminOrEmployee,validatePatchArray,validateMW,controller.updateEmployee)
 .delete(checkAdminOrBadmin,validateDelArray,validateMW,controller.deleteEmployee)
 
 
