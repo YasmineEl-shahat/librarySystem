@@ -14,34 +14,46 @@ exports.getAllEmployee = (request , response ,next)=>{
 
 exports.addEmployee = (request , response , next)=>{
     let hash = bcrypt.hashSync(request.body.password , saltRounds)
-    new employeeSchema ({
-        _id: request.body._id,
-        fname:request.body.fname,
-        lname:request.body.lname,
-        email:request.body.email,
-        password:hash,
-        salary: request.body.salary,
-        birthdate: request.body.birthdate,
-        hiredate: request.body.hiredate,
-        image: request.file?.path ? request.file.path : ""
-    }).save()
-    .then(data => response.status(201).json({data}))
-    .catch(error => next(error))
-}
+    
+        new employeeSchema ({
+            _id: request.body._id,
+            fname:request.body.fname,
+            lname:request.body.lname,
+            email:request.body.email,
+            password:hash,
+            salary: request.body.salary,
+            birthdate: request.body.birthdate,
+            hiredate: request.body.hiredate,
+            image: request.file?.path ? request.file.path : ""
+        }).save()
+        .then(data => response.status(201).json({data}))
+        .catch(error => next(error))
+    }
+    
+
 
 exports.updateEmployee = (request , response , next)=>{
-    let hash = bcrypt.hashSync(request.body.password , saltRounds)
+    let hash = bcrypt.hashSync(request.body.password, saltRounds)
+    if(request.body.email !=null){
+        next(new Error("you can't update your email "));
+    }
+    else if(request.body.hiredate !=null){
+     next(new Error("you can't update your hiredate "));}
+    else if(request.body.salary !=null){
+        next(new Error("you can't update your salary "));
+    }
+    else{
     employeeSchema.updateOne(
         {_id: request.body._id},
         { 
             $set: {
                 fname:request.body.fname,
                 lname:request.body.lname,
-                email:request.body.email,
+                // email:request.body.email,
                 password:hash,
-                salary: request.body.salary,
+                // salary: request.body.salary,
                 birthdate: request.body.birthdate,
-                hiredate: request.body.hiredate,
+                // hiredate: request.body.hiredate,
                 image: request.file?.path ? request.file.path : ""
             }
         }
@@ -51,6 +63,7 @@ exports.updateEmployee = (request , response , next)=>{
         else response.status(200).json({data})
     })
     .catch(error => next(error))
+}
 }
 
 exports.deleteEmployee = (request,response,next)=>{
