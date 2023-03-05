@@ -21,6 +21,7 @@ exports.validatePostArray = [
   body("edition").isInt().withMessage("book edition should be integer"),
   body("pages").isInt().withMessage("book pages should be integer"),
   body("avilable").isInt().withMessage(" avilable books number should be integer"),
+  body("numOfCopies").isInt().withMessage("  number of book copies should be integer"),
   body("shelfNo").isInt().withMessage("book shelfNo should be integer"),
 ];
 exports.validatePatchArray = [
@@ -47,6 +48,7 @@ exports.validatePatchArray = [
     body("edition").optional().isInt().withMessage("book edition should be integer"),
     body("pages").optional().isInt().withMessage("book pages should be integer"),
     body("avilable").optional().isInt().withMessage(" avilable books number should be integer"),
+    body("numOfCopies").optional().isInt().withMessage("  number of book copies should be integer"),
     body("shelfNo").optional().isInt().withMessage("book shelfNo should be integer"),
  
 ];
