@@ -33,8 +33,8 @@ module.exports.checkAdmin = (request, response, next) => {
 };
 module.exports.checkAdminOrBadmin = (request, response, next) => {
   if (
-    (request.role == "admin" && request.id == request.params.id) ||
-    request.role == "badmin"
+    request.role == "badmin" ||
+    (request.role == "admin" && request.id == request.params.id)
   ) {
     next();
   } else NotAuthorized(next);
