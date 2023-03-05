@@ -18,8 +18,8 @@ const schema = new mongoose.Schema({
     },
   birthdate: { type: Date, required: true },
   fullAddress: { city:String,street:String,building:Number },
-  //createdAt:{type:Date,required:true},
-  image: String,
+  // createdAt:{type:Date.now(),required:true},
+  image: { type: String, required: true },
 },
 {
   timestamps:true
