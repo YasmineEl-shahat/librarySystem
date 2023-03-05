@@ -30,7 +30,7 @@ const schema = new mongoose.Schema({
       type:Object,
       bookId:{type:Number,required:true,ref:books},
       date:{type:Date,required:true},
-      nor:{type:Number,required:true}
+      numOfReading:{type:Number,required:true}
     }
   ],
   borrowedBooks:[
@@ -39,7 +39,7 @@ const schema = new mongoose.Schema({
       bookId:{type:Number,required:true,ref:books},
       deadlineDate:{type:Date,required:true},
       empId:{type:Number,required:true,ref:employees},
-      nob:{type:Number,required:true},
+      numOfBorrowed:{type:Number,required:true},
       return:{type:Boolean}
     }
   ]
