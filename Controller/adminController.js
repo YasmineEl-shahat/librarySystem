@@ -44,9 +44,10 @@ exports.addAdmin = (request, response, next) => {
 
 exports.updateAdmin = async (request, response, next) => {
   try {
+    let hashPassword = null;
+    let pathToImg = null;
     let adminData = await adminSchema.findOne({ _id: request.params.id });
     if (!adminData) throw new Error("Admin not found");
-    let hashPassword = null;
     if (request.body.password)
       hashPassword = bcrypt.hashSync(
         request.body.password,
@@ -62,6 +63,9 @@ exports.updateAdmin = async (request, response, next) => {
       (request.body.password == "newAd12_" || !request.body.password)
     )
       throw new Error("you have to change the previously created pass");
+    if (adminData) {
+      pathToImg = adminData.image;
+    }
     await adminSchema
       .updateOne(
         { _id: request.params.id },
@@ -79,10 +83,7 @@ exports.updateAdmin = async (request, response, next) => {
         }
       )
       .then((data) => {
-        if (adminData) {
-          const pathToImg = adminData.image;
-          fs.unlinkSync(pathToImg);
-        }
+        if (pathToImg && request.file.path) fs.unlinkSync(pathToImg);
         if (data.matchedCount == 0) throw new Error("Admin not found");
         else response.status(200).json({ data: "updated" });
       })
