@@ -15,6 +15,19 @@ exports.getAllMembers=(request,response,next)=>{
     .catch(error=>next(error))
 }
 
+// Get Member By ID
+exports.getMember=(request,response,next)=>{
+    MemberSchema.find({_id:request.params.id})
+    .then(data=>{
+        console.log(data)
+        if(data.length==1)
+            response.status(200).json({data})
+        else 
+            next(new Error("Member not found"));
+    })
+    .catch(error=>next(error))
+}
+
 // Add Member
 exports.addMember=(request,response,next)=>{
     let hashPassword= bcrypt.hashSync(request.body.password,bcrypt.genSaltSync(saltRounds));

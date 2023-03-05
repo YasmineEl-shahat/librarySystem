@@ -69,7 +69,7 @@ module.exports.baseAdminOremployee = (request, response, next) => {
   } else NotAuthorized(next);
 };
 
-module.exports.member = (request, response, next) => {
+module.exports.checkMember = (request, response, next) => {
   console.log(request.role)
   console.log(request.id)
   console.log(request.body._id);
