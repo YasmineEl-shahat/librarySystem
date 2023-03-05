@@ -12,6 +12,7 @@ const schema = new mongoose.Schema({
   pages: { type: Number, required: true },
   image: {type:String,required:true},
   avilable:{type:Number,required:true},
+  numOfCopies:{type:Number,required:true},
   shelfNo:{type:Number,required:true}
 });
 

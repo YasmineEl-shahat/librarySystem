@@ -14,7 +14,10 @@ exports.getAllAdmins = (request, response, next) => {
 exports.getAdmin = (request, response, next) => {
   adminSchema
     .findOne({ _id: request.params.id })
-    .then((data) => response.status(200).json({ data }))
+    .then((data) => {
+      if (data) response.status(200).json({ data });
+      else throw new Error("admin not found");
+    })
     .catch((error) => next(error));
 };
 
@@ -41,6 +44,9 @@ exports.addAdmin = (request, response, next) => {
 
 exports.updateAdmin = async (request, response, next) => {
   try {
+    let adminData = await adminSchema.findOne({ _id: request.params.id });
+    if (!adminData) throw new Error("Admin not found");
+    let hashPassword = null;
     if (request.body.password)
       hashPassword = bcrypt.hashSync(
         request.body.password,
@@ -56,7 +62,7 @@ exports.updateAdmin = async (request, response, next) => {
       (request.body.password == "newAd12_" || !request.body.password)
     )
       throw new Error("you have to change the previously created pass");
-    let adminData = await adminSchema
+    await adminSchema
       .updateOne(
         { _id: request.params.id },
         {
@@ -64,7 +70,7 @@ exports.updateAdmin = async (request, response, next) => {
             fname: request.body.fname,
             lname: request.body.lname,
             email: request.body.email,
-            password: hashPassword,
+            password: hashPassword ?? adminData.password,
             salary: request.body.salary,
             birthdate: request.body.birthdate,
             hiredate: request.body.hiredate,
@@ -79,26 +85,26 @@ exports.updateAdmin = async (request, response, next) => {
         }
         if (data.matchedCount == 0) throw new Error("Admin not found");
         else response.status(200).json({ data: "updated" });
-      });
+      })
+      .catch((error) => next(error));
   } catch (error) {
     next(error);
   }
 };
 exports.deleteAdmin = async (request, response, next) => {
-  try {
-    let adminData = await adminSchema.findOne(
-      { _id: request.params.id },
-      { image: 1, _id: 0 }
-    );
-    if (adminData) {
-      const pathToImg = adminData.image;
-      fs.unlinkSync(pathToImg);
-    }
-    adminSchema.deleteOne({ _id: request.params.id }).then((data) => {
+  let adminData = await adminSchema.findOne(
+    { _id: request.params.id },
+    { image: 1, _id: 0 }
+  );
+  if (adminData) {
+    const pathToImg = adminData.image;
+    fs.unlinkSync(pathToImg);
+  }
+  adminSchema
+    .deleteOne({ _id: request.params.id })
+    .then((data) => {
       if (data.deletedCount == 0) throw new Error("Admin not found");
       else response.status(200).json({ data: "deleted" });
-    });
-  } catch (error) {
-    next(error);
-  }
+    })
+    .catch((error) => next(error));
 };
