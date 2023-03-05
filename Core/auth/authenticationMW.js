@@ -27,35 +27,42 @@ module.exports.checkBaseAdmin = (request, response, next) => {
   } else NotAuthorized(next);
 };
 module.exports.checkAdmin = (request, response, next) => {
-  if (request.role == "admin" &&   request.id == request.body._id) {
+  if (request.role == "admin" && request.id == request.body._id) {
     next();
   } else NotAuthorized(next);
 };
 module.exports.checkAdminOrBadmin = (request, response, next) => {
-
-  console.log(request.role)
-  if ((request.role == "admin" &&   request.id == request.body._id) || request.role == "badmin" ) {
+  console.log(request.role);
+  if (
+    (request.role == "admin" && request.id == request.body._id) ||
+    request.role == "badmin"
+  ) {
     next();
   } else NotAuthorized(next);
 };
 
 module.exports.employeeOrAdmin = (request, response, next) => {
-  console.log(request.role)
-  console.log(request.id)
+  console.log(request.role);
+  console.log(request.id);
   console.log(request.body._id);
-  if(request.role == "admin"  || (request.role == "employee"  && request.id == request.body._id) )  {
+  if (
+    request.role == "admin" ||
+    (request.role == "employee" && request.id == request.body._id)
+  ) {
     next();
   } else NotAuthorized(next);
 };
 
-
-
-
-module.exports.checkBadminOrAdminOrEmployee= (request , response ,next)=>{
-  console.log(request.role)
-  if(((request.role == "admin" || request.role == "employee" ) && request.id == request.body._id ) ||  request.role == "badmin" ) 
-      next();
-  else  NotAuthorized(next);
+module.exports.checkBadminOrAdminOrEmployee = (request, response, next) => {
+  console.log(request.role);
+  if (
+    ((request.role == "admin" || request.role == "employee") &&
+      request.id == request.body._id) ||
+    request.role == "badmin"
+  )
+    next();
+  else NotAuthorized(next);
+};
 
 }
 

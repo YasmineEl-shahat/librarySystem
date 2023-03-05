@@ -35,8 +35,12 @@ exports.addEmployee = (request , response , next)=>{
 
 
 exports.updateEmployee = async (request , response , next)=>{
-    // let hash = bcrypt.hashSync(request.body.password, saltRounds)
-
+    if(request.body.password){
+        let hash = bcrypt.hashSync(request.body.password, saltRounds)
+    }
+    else{
+        let hash=request.body.password;
+    }
     // delete image from server
     try{
         let employee=await employeeSchema.findOne({_id:request.body._id},{image:1,_id:0})
@@ -60,7 +64,7 @@ exports.updateEmployee = async (request , response , next)=>{
                     fname:request.body.fname,
                     lname:request.body.lname,
                     email:request.body.email,
-                    // password:hash,
+                    password:hash,
                     salary: request.body.salary,
                     birthdate: request.body.birthdate,
                     hiredate: request.body.hiredate,

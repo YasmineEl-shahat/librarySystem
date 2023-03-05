@@ -9,7 +9,7 @@ const validatePatchArray =
 const intParam = require("../Core/paramValidation").intParam;
 const {
   checkBaseAdmin,
-  checkAdmin,
+  checkAdminOrBadmin,
 } = require("./../Core/auth/authenticationMW");
 const uploadImage = require("../helpers/uploadingImages");
 const router = express.Router();
@@ -29,7 +29,7 @@ router
   );
 router
   .route("/admins/:id")
-  .all(checkBaseAdmin, checkAdmin)
+  .all(checkAdminOrBadmin)
   .get(intParam, validateMW, controller.getAdmin)
   .patch(
     upload.single("image"),

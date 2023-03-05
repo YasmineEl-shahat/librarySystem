@@ -80,18 +80,16 @@ exports.updateBook=async (request,response,next)=>{
 //delete book
 exports.deleteBook=async (request,response,next)=>{
     try{
-        let imagePath=await bookSchema.findOne({_id:request.body.id},{image:1,_id:0})
-        console.log("path: " , imagePath.image)
+        let imagePath=await bookSchema.findOne({_id: request.params.id},{image:1,_id:0})
         if(imagePath)
         {
             const pathToImg = imagePath.image;
             fs.unlinkSync(pathToImg);
         }
-        else{
-            console.log("image not found")
-        }
+       
+        
         bookSchema.deleteOne({
-            _id:request.body.id
+            _id: request.params.id
         }).then(data=>{
             if(data.deletedCount==0)
             {
@@ -101,6 +99,7 @@ exports.deleteBook=async (request,response,next)=>{
                 response.status(200).json({data:"deleted"});
                 console.log(data)
         })
+       
     }
     catch(error){
         next(error)
