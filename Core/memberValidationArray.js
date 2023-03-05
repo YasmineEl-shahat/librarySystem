@@ -22,8 +22,12 @@ exports.validatePostArray = [
   body("city").isString().withMessage("member Address City must be a String"),
   body("street").isString().withMessage("member Address Street must be a String"),
   body("building").isInt().withMessage("member Address Building must be an Integer"),
-  // body("createdAt").isDate().withMessage("invalid creating date"),
+  body("image").custom((value, { req }) => { // need any update ????
+    if (!req.file) throw new Error("Profile Img is required");
+    return true;
+  }).withMessage("Enter Valid Image")
 ];
+
 exports.validatePatchArray = [
     body("fullName")
       .optional()
@@ -31,7 +35,6 @@ exports.validatePatchArray = [
       .withMessage("member fullname should be string")
       .isLength({ min: 6})
       .withMessage("member fullname should contain at least 6 chars"),
-    // body("email").optional().isEmail().withMessage("invalid mail"), //member do not update email
     body("password")
       .optional()
       .isStrongPassword()
@@ -48,7 +51,5 @@ exports.validatePatchArray = [
     // body("fullAddress").optional().isObject().withMessage("Address must be an Object"),
     body("city").optional().isString().withMessage("member Address City must be a String"),
     body("street").optional().isString().withMessage("member Address Street must be a String"),
-    body("building").optional().isInt().withMessage("member Address Building must be an Integer"),
-    // body("createdAt").optional().isDate().withMessage("invalid creating date"),
-
+    body("building").optional().isInt().withMessage("member Address Building must be an Integer")
 ];
