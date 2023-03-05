@@ -21,9 +21,6 @@ const schema = new mongoose.Schema({
   // createdAt:{type:Date.now(),required:true},
   image: String,
 },
-// {
-//   _id: false 
-// },
 {
   timestamps:true
 });

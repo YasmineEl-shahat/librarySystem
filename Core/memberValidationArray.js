@@ -48,7 +48,7 @@ exports.validatePatchArray = [
     // body("fullAddress").optional().isObject().withMessage("Address must be an Object"),
     body("city").optional().isString().withMessage("member Address City must be a String"),
     body("street").optional().isString().withMessage("member Address Street must be a String"),
-    body("abuilding").optional().isInt().withMessage("member Address Building must be an Integer"),
+    body("building").optional().isInt().withMessage("member Address Building must be an Integer"),
     // body("createdAt").optional().isDate().withMessage("invalid creating date"),
 
 ];
