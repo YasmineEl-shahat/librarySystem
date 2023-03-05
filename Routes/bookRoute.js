@@ -11,6 +11,8 @@ router.route("/books")
 .get(controller.getAllBooks)
 .post(upload.single("image"),validatePostArray,validateMW,controller.addBook)
 .patch(upload.single("image"),validatePatchArray,validateMW,controller.updateBook)
-.delete(controller.deleteBook)
 
+
+router.route("/books/:id")
+.delete(validateMW,controller.deleteBook)
 module.exports = router;
