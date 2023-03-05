@@ -9,6 +9,7 @@ const schema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true,
+    match: [/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/, " invalid Email"],
   },
   password: { type: String, required: true },
   salary: { type: Number, required: true },
@@ -17,5 +18,5 @@ const schema = new mongoose.Schema({
   image: String,
 });
 
-schema.plugin(AutoIncrement,{id :"admin_id" , inc_field:"_id"});
+schema.plugin(AutoIncrement, { id: "admin_id", inc_field: "_id" });
 mongoose.model("admins", schema);
