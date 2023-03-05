@@ -39,8 +39,8 @@ const schema = new mongoose.Schema({
       bookId:{type:Number,required:true,ref:books},
       deadlineDate:{type:Date,required:true},
       empId:{type:Number,required:true,ref:employees},
-      nop:{type:Number,required:true},
-      return:{type:String}
+      nob:{type:Number,required:true},
+      return:{type:Boolean}
     }
   ]
 },

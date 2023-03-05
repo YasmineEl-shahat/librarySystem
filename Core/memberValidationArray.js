@@ -34,7 +34,7 @@ exports.validatePostArray = [
   body("borrowedBooks.bookId").isInt().withMessage("Invalid Book ID"),
   body("borrowedBooks.deadlineDate").isDate().withMessage("Invalid DeadLine Data"),
   body("borrowedBooks.nop").isInt().withMessage("Invalid NO of Borrowed"),
-  body("borrowedBooks.return").isIn(['Y','N']).withMessage("Value MustBe Y or N"),
+  body("borrowedBooks.return").isBoolean().withMessage("Value MustBe true or false"),
   
 ];
 
