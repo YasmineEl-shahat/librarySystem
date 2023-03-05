@@ -64,7 +64,7 @@ module.exports.checkBadminOrAdminOrEmployee = (request, response, next) => {
   else NotAuthorized(next);
 };
 
-}
+
 
 
 module.exports.baseAdminOremployee = (request, response, next) => {
