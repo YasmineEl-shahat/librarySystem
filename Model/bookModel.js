@@ -14,6 +14,8 @@ const schema = new mongoose.Schema({
   avilable:{type:Number,required:true},
   numOfCopies:{type:Number,required:true},
   shelfNo:{type:Number,required:true}
+},{
+  timestamps:true
 });
 
 schema.plugin(AutoIncrement,{id :"book_id" , inc_field:"_id"});

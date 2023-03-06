@@ -16,6 +16,8 @@ exports.getAllBooks=(request,response,next)=>{
 
   //add book
   exports.addBook = (request, response, next) => {
+    if(request.body.avilable!=request.body.numOfCopies)
+        next(new Error("Number of available books must equal Number of copies"));
     new bookSchema({
       _id: request.body.id,
       title: request.body.title,
@@ -103,3 +105,17 @@ exports.deleteBook=async (request,response,next)=>{
         next(error)
     }
 }
+
+// Get New Arrived Books
+exports.getNewBooks=(request,response,next)=>{
+    let beforeMonth = new Date();
+    beforeMonth.setMonth(beforeMonth.getMonth() - 1);
+    bookSchema.find({
+        publishingDate: { $gte: beforeMonth }
+    })
+    .then(data=>{
+        response.status(200).json({data})
+    })
+    .catch(error=>next(error))
+}
+

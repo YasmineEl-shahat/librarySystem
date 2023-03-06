@@ -17,6 +17,7 @@
     "express-validator": "^6.15.0",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.0",
+    "moment": "^2.29.4",
     "mongo-sanitize": "^1.1.0",
     "mongoose": "^6.9.2",
     "mongoose-sequence": "^5.3.1",
