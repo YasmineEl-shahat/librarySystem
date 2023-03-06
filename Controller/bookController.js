@@ -27,6 +27,7 @@ exports.getAllBooks=(request,response,next)=>{
       pages: request.body.pages,
       image: request.file?.path ? request.file.path : "",
       avilable: request.body.avilable,
+      numOfCopies: request.body.numOfCopies,
       shelfNo: request.body.shelfNo,
     })
       .save()
@@ -62,12 +63,12 @@ exports.updateBook=async (request,response,next)=>{
                 pages: request.body.pages,
                 image: request.file?.path ? request.file.path : bookData.image,
                 avilable: request.body.avilable,
+                numOfCopies: request.body.numOfCopies,
                 shelfNo: request.body.shelfNo,
-                
             }
         }).then(data=>{
             if(data.matchedCount==0)
-                next(new Error("Book not found"));    
+                next(new Error("Book not found"));
             else
                 response.status(200).json({data:"updated"});
         })
@@ -86,8 +87,6 @@ exports.deleteBook=async (request,response,next)=>{
             const pathToImg = imagePath.image;
             fs.unlinkSync(pathToImg);
         }
-       
-        
         bookSchema.deleteOne({
             _id: request.params.id
         }).then(data=>{
@@ -99,7 +98,6 @@ exports.deleteBook=async (request,response,next)=>{
                 response.status(200).json({data:"deleted"});
                 console.log(data)
         })
-       
     }
     catch(error){
         next(error)
