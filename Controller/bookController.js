@@ -111,7 +111,7 @@ exports.getNewBooks=(request,response,next)=>{
     let beforeMonth = new Date();
     beforeMonth.setMonth(beforeMonth.getMonth() - 1);
     bookSchema.find({
-        publishingDate: { $gte: beforeMonth }
+        createdAt: { $gte: beforeMonth }
     })
     .then(data=>{
         response.status(200).json({data})
