@@ -59,10 +59,10 @@ module.exports.checkBadminOrAdminOrEmployee = (request, response, next) => {
   else NotAuthorized(next);
 };
 
-module.exports.baseAdminOremployee = (request, response, next) => {
+module.exports.checkBaseAdminOremployee = (request, response, next) => {
   if (
     request.role == "badmin" ||
-    (request.role == "employee" && request.id == request.params.id)
+    request.role == "employee"
   ) {
     next();
   } else NotAuthorized(next);
@@ -71,7 +71,8 @@ module.exports.baseAdminOremployee = (request, response, next) => {
 module.exports.checkBadminOrEmployeeOrMember = (request, response, next) => {
   console.log(request.role);
   if (request.role == "badmin" || request.role == "employee"
-    || (request.role == "member" && request.id == request.body._id))
+    || (request.role == "member" && request.id == request.params.id)
+    || (request.role == "member" && request.id == request.body.id))
     next();
   else NotAuthorized(next);
 };

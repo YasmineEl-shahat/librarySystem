@@ -1,7 +1,7 @@
 const express =require("express");
 const {
   checkBadminOrEmployeeOrMember,
-  baseAdminOremployee
+  checkBaseAdminOremployee
   } = require("./../Core/auth/authenticationMW");
 const {
     validatePostArray,
@@ -15,11 +15,11 @@ const upload = uploadImage("Members");
 
 const router = express.Router();
 router.route("/members")
-  .get(baseAdminOremployee,controller.getAllMembers)
-  .post(upload.single("image"),baseAdminOremployee,validatePostArray,validateMW,controller.addMember)
+  .get(checkBaseAdminOremployee,controller.getAllMembers)
+  .post(upload.single("image"),checkBaseAdminOremployee,validatePostArray,validateMW,controller.addMember)
   .patch(upload.single("image"),checkBadminOrEmployeeOrMember,validatePatchArray,validateMW,controller.updateMember)
 
 router.route("/members/:id")
   .get(checkBadminOrEmployeeOrMember,validateMW,controller.getMember)
-  .delete(baseAdminOremployee,validateMW,controller.deleteMember)
+  .delete(checkBaseAdminOremployee,validateMW,controller.deleteMember)
 module.exports = router;

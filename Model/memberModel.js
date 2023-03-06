@@ -3,11 +3,11 @@ const AutoIncrement = require("mongoose-sequence")(mongoose);
 const books = require('./bookModel');
 const employees = require('./employeeModel');
 const schema = new mongoose.Schema({
-  _id: { type: Number, required: true },
+  _id: Number,
   fullName: { type: String, required: true },
   email: {
     type: String,
-    unique: true, 
+    unique: true,
     required: true,
     match: [/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/, " Invalid Email"],
   },
