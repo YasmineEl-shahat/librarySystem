@@ -54,9 +54,11 @@ exports.updateEmployee = async (request , response , next)=>{
     catch(error){
         next(new Error("image not found " ))
     }
-
-     //update with role admin
-    if(request.role == "admin" ){
+    if(request.role=="employee"){
+        delete request.body.email
+        delete request.body.hiredate
+        delete request.body.salary
+    }
         employeeSchema.updateOne(
             {_id: request.body._id},
             { 
@@ -77,41 +79,41 @@ exports.updateEmployee = async (request , response , next)=>{
             else response.status(200).json({data})
         })
         .catch(error => next(error))
-    }
+    
     //update with role employee
-    else if (request.role == "employee"){
-    if(request.body.email !=null){
-        next(new Error("you can't update your email "));
-    }
-    else if(request.body.hiredate !=null){
-        next(new Error("you can't update your hiredate "));
-    }
-    else if(request.body.salary !=null){
-        next(new Error("you can't update your salary "));
-    }
-    else{
-    employeeSchema.updateOne(
-        {_id: request.body._id},
-        { 
-            $set: {
-                fname:request.body.fname,
-                lname:request.body.lname,
-                // password:hash,
-                birthdate: request.body.birthdate,
-                image: request.file?.path ? request.file.path : ""
-            }
-        }
-    ).then( (data) => {
-        if(data.matchedCount == 0)
-            next(new Error("employee not found for update"))
-        else response.status(200).json({data})
-    })
-    .catch(error => next(error))
-}
-}
-else {
-    next(Error);
-}
+//     else if (request.role == "employee"){
+//     if(request.body.email !=null){
+//         next(new Error("you can't update your email "));
+//     }
+//     else if(request.body.hiredate !=null){
+//         next(new Error("you can't update your hiredate "));
+//     }
+//     else if(request.body.salary !=null){
+//         next(new Error("you can't update your salary "));
+//     }
+//     else{
+//     employeeSchema.updateOne(
+//         {_id: request.body._id},
+//         { 
+//             $set: {
+//                 fname:request.body.fname,
+//                 lname:request.body.lname,
+//                 // password:hash,
+//                 birthdate: request.body.birthdate,
+//                 image: request.file?.path ? request.file.path : ""
+//             }
+//         }
+//     ).then( (data) => {
+//         if(data.matchedCount == 0)
+//             next(new Error("employee not found for update"))
+//         else response.status(200).json({data})
+//     })
+//     .catch(error => next(error))
+// }
+// }
+// else {
+//     next(Error);
+// }
 }
 
 exports.deleteEmployee=async (request,response,next)=>{
