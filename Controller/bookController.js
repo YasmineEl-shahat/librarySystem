@@ -119,3 +119,25 @@ exports.getNewBooks=(request,response,next)=>{
     .catch(error=>next(error))
 }
 
+// Get Books within specific Year
+exports.getBooksYear=(request,response,next)=>{
+    console.log(typeof(Number(request.params.year)))
+    const y =Number(request.params.year);
+    bookSchema.aggregate(
+        [ {$project:
+            {
+                _id:0,
+                title: 1,
+                publishingDate:
+                {
+                    $year: "$publishingDate"
+                }
+            }
+        },
+            {$match: {publishingDate: y}} ]
+    )
+    .then(data=>{
+        response.status(200).json({data})
+    })
+    .catch(error=>next(error))
+}

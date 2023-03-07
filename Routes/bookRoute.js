@@ -17,4 +17,5 @@ router.route("/books/:id")
 .delete(validateMW,controller.deleteBook)
 
 router.route("/getNewBooks").get(controller.getNewBooks)
+router.route("/getBooksYear/:year").get(controller.getBooksYear)
 module.exports = router;
