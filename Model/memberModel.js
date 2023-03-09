@@ -40,7 +40,7 @@ const schema = new mongoose.Schema(
         bookId: { type: Number, required: true, ref: books },
         deadlineDate: { type: Date, required: true },
         empId: { type: Number, required: true, ref: employees },
-        numOfBorrowed: { type: Number, required: true },
+        numOfBorrowed: { type: Number, required: true,default:[0] },
         return: { type: Boolean },
       },
     ],
@@ -50,5 +50,6 @@ const schema = new mongoose.Schema(
   }
 );
 
-schema.plugin(AutoIncrement, { id: "member_id", inc_field: "_id" });
+
+schema.plugin(AutoIncrement, { id: "borrow_id", inc_field: "_id" });
 mongoose.model("members", schema);
