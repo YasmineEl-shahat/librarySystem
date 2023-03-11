@@ -43,6 +43,7 @@ exports.login = async (request, response, next) => {
     } else if (member) {
       checkPass = await comparePassword(request.body.password, member.password);
     }
+    // first time login
     if (admin && request.body.password == "newAd12_") {
       authResponse(
         admin._id,

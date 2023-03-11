@@ -51,6 +51,7 @@ exports.updateAdmin = async (request, response, next) => {
     let adminData = await adminSchema.findOne({ _id: request.params.id });
     if (!adminData) throw new Error("Admin not found");
     let pass = adminData.password;
+    // first time login
     if (
       (await comparePassword("newAd12_", pass)) &&
       (!request.body.fname ||

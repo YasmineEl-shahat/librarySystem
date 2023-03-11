@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 const books = require("./bookModel");
 const employees = require("./employeeModel");
-const schema = new mongoose.Schema(
+
+const memberSchema = new mongoose.Schema(
   {
     _id: Number,
     fullName: { type: String, required: true },
@@ -26,30 +27,26 @@ const schema = new mongoose.Schema(
       building: { type: String, required: true },
     },
     image: { type: String, required: true },
-    readingBooks: [
-      {
-        type: Object,
-        bookId: { type: Number, required: true, ref: books },
-        date: { type: Date, required: true },
-        numOfReading: { type: Number, required: true },
+    blockedDate: { type: Date },
+    readingBooks: {
+      type: Array,
+      items: {
+        type: Number,
+        ref: books,
       },
-    ],
-    borrowedBooks: [
-      {
-        type: Object,
-        bookId: { type: Number, required: true, ref: books },
-        deadlineDate: { type: Date, required: true },
-        empId: { type: Number, required: true, ref: employees },
-        numOfBorrowed: { type: Number, required: true,default:[0] },
-        return: { type: Boolean },
+    },
+    borrowedBooks: {
+      type: Array,
+      items: {
+        type: Number,
+        ref: books,
       },
-    ],
+    },
   },
   {
     timestamps: true,
   }
 );
 
-
-schema.plugin(AutoIncrement, { id: "borrow_id", inc_field: "_id" });
-mongoose.model("members", schema);
+memberSchema.plugin(AutoIncrement, { id: "member_id", inc_field: "_id" });
+mongoose.model("members", memberSchema);
