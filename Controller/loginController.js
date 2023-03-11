@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
 
 require("./../Model/adminModel");
 require("./../Model/employeeModel");
@@ -8,16 +7,15 @@ require("./../Model/memberModel");
 const adminSchema = mongoose.model("admins");
 const employeeSchema = mongoose.model("employees");
 const memberSchema = mongoose.model("members");
+const comparePassword = require("../helpers/comparePassword");
 
 let sk = process.env.SECRET_KEY || "SK";
 
-async function comparePassword(plaintextPassword, hash) {
-  const result = await bcrypt.compare(plaintextPassword, hash);
-  return result;
-}
-function authResponse(id, role, response) {
+function authResponse(id, role, response, errorMsg) {
   let token = jwt.sign({ id: id, role: role }, sk, { expiresIn: "3h" });
-  response.status(200).json({ message: "Authenticated", token });
+  response
+    .status(200)
+    .json({ message: "Authenticated " + errorMsg ?? "", token });
 }
 exports.login = async (request, response, next) => {
   if (
@@ -45,8 +43,23 @@ exports.login = async (request, response, next) => {
     } else if (member) {
       checkPass = await comparePassword(request.body.password, member.password);
     }
-
-    if (admin && checkPass) authResponse(admin._id, "admin", response);
+    if (admin && request.body.password == "newAd12_") {
+      authResponse(
+        admin._id,
+        "admin",
+        response,
+        ",you have to change the previously created pass"
+      );
+    } else if (admin && admin.isBase && request.body.password == "newAd12_") {
+      authResponse(
+        admin._id,
+        "badmin",
+        response,
+        ",you have to change the previously created pass"
+      );
+    } else if (admin && checkPass && admin.isBase)
+      authResponse(admin._id, "badmin", response);
+    else if (admin && checkPass) authResponse(admin._id, "admin", response);
     else if (employee && checkPass)
       authResponse(employee._id, "employee", response);
     else if (member && checkPass) authResponse(member._id, "member", response);

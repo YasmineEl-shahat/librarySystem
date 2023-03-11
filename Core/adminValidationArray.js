@@ -12,6 +12,11 @@ exports.validatePostArray = [
     .isLength({ min: 2 })
     .withMessage("admin last name should contain at least 2 chars"),
   body("email").isEmail().withMessage("invalid mail"),
+  body("isBase")
+    .isBoolean()
+    .withMessage(
+      "isBase should be boolean value, true for basic admin, false for admins"
+    ),
   body("password")
     .isStrongPassword()
     .withMessage(

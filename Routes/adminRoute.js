@@ -28,7 +28,7 @@ router
     controller.addAdmin
   );
 router
-  .route("/admins/:id")
+  .route("/admin/:id")
   .all(checkAdminOrBadmin)
   .get(intParam, validateMW, controller.getAdmin)
   .patch(

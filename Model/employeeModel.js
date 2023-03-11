@@ -24,7 +24,7 @@ const schema = new mongoose.Schema({
   lname:String,
   email: {
     type: String,
-    unique: true,
+    unique: [true , "xszcdx"],
   },
   password:String,
   salary:Number,

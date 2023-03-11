@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 require("../Model/adminModel");
 const adminSchema = mongoose.model("admins");
+const comparePassword = require("../helpers/comparePassword");
 
 exports.getAllAdmins = (request, response, next) => {
   adminSchema
@@ -31,6 +32,7 @@ exports.addAdmin = (request, response, next) => {
     fname: request.body.fname,
     lname: request.body.lname,
     email: request.body.email,
+    isBase: request.body.isBase,
     password: hashPassword,
     salary: request.body.salary,
     birthdate: request.body.birthdate,
@@ -48,6 +50,17 @@ exports.updateAdmin = async (request, response, next) => {
     let pathToImg = null;
     let adminData = await adminSchema.findOne({ _id: request.params.id });
     if (!adminData) throw new Error("Admin not found");
+    let pass = adminData.password;
+    if (
+      (await comparePassword("newAd12_", pass)) &&
+      (!request.body.fname ||
+        !request.body.lname ||
+        !request.body.password ||
+        !request.body.birthdate ||
+        !request.file)
+    )
+      throw new Error("you have to complete your data!");
+
     if (request.body.password)
       hashPassword = bcrypt.hashSync(
         request.body.password,
@@ -57,11 +70,8 @@ exports.updateAdmin = async (request, response, next) => {
       request.role == "admin" &&
       (request.body.hiredate || request.body.salary)
     )
-      throw new Error("you are not allowed to update salary or hiredate");
-    if (
-      request.role == "admin" &&
-      (request.body.password == "newAd12_" || !request.body.password)
-    )
+      throw new Error("you are not allowed to update salary or hiredate!");
+    if (request.role == "admin" && request.body.password == "newAd12_")
       throw new Error("you have to change the previously created pass");
     if (adminData) {
       pathToImg = adminData.image;
@@ -78,12 +88,12 @@ exports.updateAdmin = async (request, response, next) => {
             salary: request.body.salary,
             birthdate: request.body.birthdate,
             hiredate: request.body.hiredate,
-            image: request.file?.path ? request.file.path : adminData.image,
+            image: request.file ? request.file.path : adminData.image,
           },
         }
       )
       .then((data) => {
-        if (pathToImg && request.file.path) fs.unlinkSync(pathToImg);
+        if (pathToImg && request.file?.path) fs.unlinkSync(pathToImg);
         if (data.matchedCount == 0) throw new Error("Admin not found");
         else response.status(200).json({ data: "updated" });
       })
