@@ -13,7 +13,7 @@ const memberSchema = new mongoose.Schema(
       required: true,
       match: [/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/, " Invalid Email"],
     },
-    password: { type: String, required: true },
+    password: { type: String, required: true, default: "newMe12_" },
     phoneNumber: {
       type: String,
       required: true,
@@ -26,7 +26,7 @@ const memberSchema = new mongoose.Schema(
       street: { type: String, required: true },
       building: { type: String, required: true },
     },
-    image: { type: String, required: [ true, "IMAGE IS RQUIRED"] },
+    image: { type: String, required: [true, "IMAGE IS RQUIRED"] },
     blockedDate: { type: Date },
     readingBooks: {
       type: Array,

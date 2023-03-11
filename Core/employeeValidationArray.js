@@ -1,6 +1,5 @@
 const { body } = require("express-validator");
 exports.validatePostArray = [
-  body("_id").optional().isInt().withMessage("Employee id should be an integer"),
   body("fname")
     .isString()
     .withMessage("Employee first name should be string")
@@ -13,16 +12,16 @@ exports.validatePostArray = [
     .withMessage("Employee last name should contain at least 2 chars"),
   body("email").isEmail().withMessage("invalid mail"),
   body("password")
+    .optional()
     .isStrongPassword()
     .withMessage(
       "password should contains at least 8 characters, one uppercase letter, one lowercase letter,one special char, and one number"
     ),
   body("salary").isNumeric().withMessage("salary should be numeric value"),
-  body("birthdate").isDate().withMessage("invalid birth date"),
+  body("birthdate").optional().isDate().withMessage("invalid birth date"),
   body("hiredate").isDate().withMessage("invalid hire date"),
 ];
 exports.validatePatchArray = [
-    body("_id").isInt().withMessage("Employee id should be an integer"),
   body("fname")
     .optional()
     .isString()
@@ -49,6 +48,6 @@ exports.validatePatchArray = [
   body("birthdate").optional().isDate().withMessage("invalid birth date"),
   body("hiredate").optional().isDate().withMessage("invalid hire date"),
 ];
-exports.validateDelArray= [
-    body("_id").isInt().withMessage("Employee id should be an integer")
+exports.validateDelArray = [
+  body("_id").isInt().withMessage("Employee id should be an integer"),
 ];

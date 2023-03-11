@@ -5,6 +5,7 @@ const {checkAdminOrBadmin,checkBadminOrAdminOrEmployee,employeeOrAdmin} = requir
 const validateMW = require("./../Core/validations/validateMW")
 const {validateDelArray,validatePatchArray,validatePostArray}= require("./../Core/employeeValidationArray")
 const uploadImage = require("../helpers/uploadingImages");
+const intParam = require("../Core/paramValidation").intParam;
 // upload image
 const upload = uploadImage("employee");
 
@@ -13,7 +14,10 @@ const router = express.Router();
 router.route("/employee")
 .get(checkAdminOrBadmin,controller.getAllEmployee)
 .post(upload.single("image"),checkAdminOrBadmin,validatePostArray,validateMW,controller.addEmployee)
-.patch(upload.single("image"),checkBadminOrAdminOrEmployee,validatePatchArray,validateMW,controller.updateEmployee)
+
+
+router.route("/employee/:id")
+.patch(upload.single("image"),intParam,validatePatchArray,validateMW,checkBadminOrAdminOrEmployee,validatePatchArray,validateMW,controller.updateEmployee)
 .delete(checkAdminOrBadmin,validateDelArray,validateMW,controller.deleteEmployee)
  
 // router.get("/employee")

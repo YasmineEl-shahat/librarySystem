@@ -13,9 +13,11 @@ let sk = process.env.SECRET_KEY || "SK";
 
 function authResponse(id, role, response, errorMsg) {
   let token = jwt.sign({ id: id, role: role }, sk, { expiresIn: "3h" });
-  response
-    .status(200)
-    .json({ message: "Authenticated " + errorMsg ?? "", token });
+  response.status(200).json({
+    message:
+      errorMsg == undefined ? "Authenticated" : "Authenticated" + errorMsg,
+    token,
+  });
 }
 exports.login = async (request, response, next) => {
   if (
@@ -44,17 +46,35 @@ exports.login = async (request, response, next) => {
       checkPass = await comparePassword(request.body.password, member.password);
     }
     // first time login
-    if (admin && request.body.password == "newAd12_") {
+    if (employee && (await comparePassword("newEmp12_", employee.password))) {
       authResponse(
-        admin._id,
-        "admin",
+        employee._id,
+        "employee",
         response,
         ",you have to change the previously created pass"
       );
-    } else if (admin && admin.isBase && request.body.password == "newAd12_") {
+    } else if (member && (await comparePassword("newMe12_", member.password))) {
+      authResponse(
+        member._id,
+        "member",
+        response,
+        ",you have to change the previously created pass"
+      );
+    } else if (
+      admin &&
+      admin.isBase &&
+      (await comparePassword("newAd12_", admin.password))
+    ) {
       authResponse(
         admin._id,
         "badmin",
+        response,
+        ",you have to change the previously created pass"
+      );
+    } else if (admin && (await comparePassword("newAd12_", admin.password))) {
+      authResponse(
+        admin._id,
+        "admin",
         response,
         ",you have to change the previously created pass"
       );
