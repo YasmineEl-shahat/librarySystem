@@ -26,7 +26,7 @@ const memberSchema = new mongoose.Schema(
       street: { type: String, required: true },
       building: { type: String, required: true },
     },
-    image: { type: String, required: true },
+    image: { type: String, required: [ true, "IMAGE IS RQUIRED"] },
     blockedDate: { type: Date },
     readingBooks: {
       type: Array,

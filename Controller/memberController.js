@@ -42,6 +42,7 @@ exports.addMember = (request, response, next) => {
     request.body.password,
     bcrypt.genSaltSync(saltRounds)
   );
+  if (!request.file) throw new Error("Image Is Required");
   new MemberSchema({
     _id: request.body.id,
     fullName: request.body.name,
@@ -52,7 +53,7 @@ exports.addMember = (request, response, next) => {
     city: request.body.city,
     street: request.body.street,
     building: request.body.building,
-    image: request.file.path,
+    image: request.file.path ,
   })
     .save()
     .then((data) => {
@@ -76,6 +77,9 @@ exports.updateMember = async (request, response, next) => {
         bcrypt.genSaltSync(saltRounds)
       );
     // Update Data
+    if(request.role!="badmin"){
+      delete request.body.email
+    }
     MemberSchema.updateOne(
       {
         _id: request.body.id,
@@ -86,6 +90,7 @@ exports.updateMember = async (request, response, next) => {
           password: hashUPassword,
           phoneNumber: request.body.phoneNumber,
           birthdate: request.body.birthdate,
+          email: request.body.email,
           city: request.body.city,
           street: request.body.street,
           building: request.body.building,

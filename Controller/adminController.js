@@ -27,6 +27,7 @@ exports.addAdmin = (request, response, next) => {
     request.body.password,
     bcrypt.genSaltSync(saltRounds)
   );
+  if (!request.file) throw new Error("image is required");
   new adminSchema({
     _id: request.body._id,
     fname: request.body.fname,
@@ -37,7 +38,7 @@ exports.addAdmin = (request, response, next) => {
     salary: request.body.salary,
     birthdate: request.body.birthdate,
     hiredate: request.body.hiredate,
-    image: request.file?.path ? request.file.path : "",
+    image: request.file?.path,
   })
     .save()
     .then((data) => response.status(201).json({ data }))

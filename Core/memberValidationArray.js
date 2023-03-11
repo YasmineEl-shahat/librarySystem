@@ -26,13 +26,6 @@ exports.validatePostArray = [
   body("building")
     .isInt()
     .withMessage("member Address Building must be an Integer"),
-  body("image")
-    .custom((value, { req }) => {
-      // need any update ????
-      if (!req.file) throw new Error("Profile Img is required");
-      return true;
-    })
-    .withMessage("Enter Valid Image"),
   body("readingBooks")
     .optional()
     .isArray()
@@ -75,6 +68,7 @@ exports.validatePatchArray = [
     .withMessage("member fullname should be string")
     .isLength({ min: 6 })
     .withMessage("member fullname should contain at least 6 chars"),
+  body("email").optional().isEmail().withMessage("invalid mail"),
   body("password")
     .optional()
     .isStrongPassword()
