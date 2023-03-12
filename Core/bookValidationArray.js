@@ -23,6 +23,8 @@ exports.validatePostArray = [
   body("avilable").isInt().withMessage(" avilable books number should be integer"),
   body("numOfCopies").isInt().withMessage("  number of book copies should be integer"),
   body("shelfNo").isInt().withMessage("book shelfNo should be integer"),
+  body("noOfBorrowing").isInt().withMessage("  number of books borrowed should be integer"),
+  body("noOfReading").isInt().withMessage("  number of book reading should be integer"),
 ];
 exports.validatePatchArray = [
     body("title").optional().isString().withMessage("book title should be string"),

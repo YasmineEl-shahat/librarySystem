@@ -13,7 +13,9 @@ const schema = new mongoose.Schema({
   image: {type:String,required:true},
   avilable:{type:Number,required:true},
   numOfCopies:{type:Number,required:true},
-  shelfNo:{type:Number,required:true}
+  shelfNo:{type:Number,required:true},
+  noOfBorrowing:{type:Number,required:true,default:0},
+  noOfReading:{type:Number,required:true,default:0},
 },{
   timestamps:true
 });

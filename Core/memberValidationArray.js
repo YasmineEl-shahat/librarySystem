@@ -26,39 +26,7 @@ exports.validatePostArray = [
   body("building")
     .isInt()
     .withMessage("member Address Building must be an Integer"),
-  body("readingBooks")
-    .optional()
-    .isArray()
-    .withMessage("Invalid Reading Books Array"),
-  body("readingBooks.bookId").optional().isInt().withMessage("Invalid Book ID"),
-  body("readingBooks.date")
-    .optional()
-    .isDate()
-    .withMessage("Invalid Reading Data"),
-  body("readingBooks.nor")
-    .optional()
-    .isInt()
-    .withMessage("Invalid NO of Readings"),
-  body("borrowedBooks")
-    .optional()
-    .isArray()
-    .withMessage("Invalid Borrowed Books Array"),
-  body("borrowedBooks.bookId")
-    .optional()
-    .isInt()
-    .withMessage("Invalid Book ID"),
-  body("borrowedBooks.deadlineDate")
-    .optional()
-    .isDate()
-    .withMessage("Invalid DeadLine Data"),
-  body("borrowedBooks.nop")
-    .optional()
-    .isInt()
-    .withMessage("Invalid NO of Borrowed"),
-  body("borrowedBooks.return")
-    .optional()
-    .isBoolean()
-    .withMessage("Value MustBe true or false"),
+
 ];
 
 exports.validatePatchArray = [
