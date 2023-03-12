@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 require("./../Model/employeeModel");
+// const sendMail = require("./../helpers/sendMails")
 const comparePassword = require("../helpers/comparePassword");
 const genHashedPassword = require("../helpers/genHashedPassword");
 
@@ -33,12 +34,14 @@ exports.addEmployee = (request, response, next) => {
     email: request.body.email,
     password: hash,
     salary: request.body.salary,
-    birthdate: request.body.birthdate,
+    // birthdate: request.body.birthdate,
     hiredate: request.body.hiredate,
-    image: request.file?.path ? request.file.path : "",
   })
     .save()
-    .then((data) => response.status(201).json({ data }))
+    .then((data) => {
+
+      response.status(201).json({ data })
+    })
     .catch((error) => next(error));
 };
 
@@ -47,7 +50,6 @@ exports.updateEmployee = async (request, response, next) => {
   let isFirstLog = false;
   if (request.role == "employee") {
     delete request.body.email;
-    delete request.body.hiredate;
     delete request.body.salary;
   }
   try {
@@ -80,10 +82,9 @@ exports.updateEmployee = async (request, response, next) => {
             lname: request.body.lname,
             email: request.body.email,
             password: hash,
-            salary: request.body.salary,
+            salary: request.body.salary ,
             birthdate: request.body.birthdate,
-            hiredate: request.body.hiredate,
-            image: request.file?.path ? request.file.path : "",
+            image: request.file?.path ,
           },
         }
       )

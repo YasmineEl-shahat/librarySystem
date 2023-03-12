@@ -3,14 +3,15 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const fs=require("fs");
+const fs = require("fs");
 
 const authenticationMW = require("./Core/auth/authenticationMW");
+const activateMW = require("./Core/auth/activateMW.js")
 const loginRoute = require("./Routes/login");
-const amdinRoute = require("./Routes/adminRoute");
+const adminRoute = require("./Routes/adminRoute");
 const employeeRoute = require("./Routes/employeeRoute");
 const memberRoute = require("./Routes/memberRoute");
-const bookRoute = require("./Routes/bookRoute")
+const bookRoute = require("./Routes/bookRoute");
 //  open server using express
 const server = express(); // create http server -> http.createServer()
 
@@ -62,8 +63,12 @@ server.use(express.urlencoded({ extended: false }));
 server.use(loginRoute);
 // auth middleware
 server.use(authenticationMW);
+// server.use(activateRouter);
+// isActivate
+
+// server.use(activateMW)
 // Routes
-server.use(amdinRoute);
+server.use(adminRoute);
 server.use(employeeRoute);
 server.use(memberRoute);
 server.use(bookRoute);
@@ -75,8 +80,7 @@ server.use((request, response, next) => {
 
 // error middleware
 server.use((error, request, response, next) => {
-  if(request.file)
-      fs.unlinkSync(request.file.path);
+  if (request.file) fs.unlinkSync(request.file.path);
   let status = error.status || 500;
   response.status(status).json({ message: error + "" });
 });

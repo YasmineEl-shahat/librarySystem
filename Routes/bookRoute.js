@@ -19,5 +19,4 @@ router.route("/books/:id")
 
 router.route("/getNewBooks").get(checkBadminOrAdminOrEmployeeBook,controller.getNewBooks)
 router.route("/getBooksYear/:year").get(controller.getBooksYear)
-router.route("/borrow").get(checkBadminOrAdminOrEmployeeBook,controller.borrowBooks)
 module.exports = router;

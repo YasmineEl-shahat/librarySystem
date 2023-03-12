@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
-// const books = require("./bookModel");
-// const employees = require("./employeeModel");
 
 const bookOperationsSchema = new mongoose.Schema(
   {
+    id: Number,
     bookId: {
       type: Number,
       ref: books,
@@ -37,4 +36,5 @@ const bookOperationsSchema = new mongoose.Schema(
   }
 );
 
+schema.plugin(AutoIncrement, { id: "bookOperation_id", inc_field: "_id" });
 mongoose.model("bookOperations", bookOperationsSchema);
