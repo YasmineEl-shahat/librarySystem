@@ -18,8 +18,9 @@ exports.getAllEmployee = (request, response, next) => {
 };
 
 exports.addEmployee = (request, response, next) => {
-  let hash = bcrypt.hashSync(request.body.password, saltRounds);
-
+  let hash = request.body.password;
+  if (request.body.password)
+    hash = bcrypt.hashSync(request.body.password, saltRounds);
   new employeeSchema({
     _id: request.body._id,
     fname: request.body.fname,
@@ -36,104 +37,68 @@ exports.addEmployee = (request, response, next) => {
     .catch((error) => next(error));
 };
 
+// update employee
 exports.updateEmployee = async (request, response, next) => {
-  // delete image from server
-  //   try {
-  //     let employee = await employeeSchema.findOne({ _id: request.params.id });
-
-  //     if (employee) {
-  //       const pathToImg = employee.image;
-  //       fs.unlinkSync(pathToImg);
-  //     }
-  //   } catch (error) {
-  //     next(new Error("image not found "));
-  //   }
+  let isFirstLog = false;
   if (request.role == "employee") {
     delete request.body.email;
     delete request.body.hiredate;
     delete request.body.salary;
-    try {
-      let employee = await employeeSchema.findOne({ _id: request.params.id });
-      console.log(employee);
-      if (request.body.password)
-        hash = bcrypt.hashSync(request.body.password, saltRounds);
-
-      ///
-      if (!employee) throw new Error("Employee not found");
-      let pass = employee.password;
-      // first time login
-      if (
-        (await comparePassword("newEmp12_", pass)) &&
-        (!request.body.fname ||
-          !request.body.lname ||
-          !request.body.password ||
-          !request.body.birthdate ||
-          !request.file)
-      )
-        throw new Error("you have to complete your data!");
-      employeeSchema
-        .updateOne(
-          { _id: request.params.id },
-          {
-            $set: {
-              fname: request.body.fname,
-              lname: request.body.lname,
-              email: request.body.email,
-              password: hash ?? pass,
-              salary: request.body.salary,
-              birthdate: request.body.birthdate,
-              hiredate: request.body.hiredate,
-              image: request.file?.path ? request.file.path : "",
-            },
-          }
-        )
-        .then((data) => {
-          if (data.matchedCount == 0)
-            next(new Error("employee not found for update"));
-          else response.status(200).json({ data: "updated" });
-        })
-        .catch((error) => next(error));
-    } catch (error) {
-      next(error);
-    }
   }
+  try {
+    let employee = await employeeSchema.findOne({ _id: request.params.id });
+    if (!employee) throw new Error("Employee not found");
+    let pass = employee.password;
+    // first time login
+    if (
+      (await comparePassword("newEmp12_", pass)) &&
+      (!request.body.fname ||
+        !request.body.lname ||
+        !request.body.password ||
+        !request.body.birthdate ||
+        !request.file)
+    ) {
+      isFirstLog = true;
+      throw new Error("you have to complete your data!");
+    }
 
-  //update with role employee
-  //     else if (request.role == "employee"){
-  //     if(request.body.email !=null){
-  //         next(new Error("you can't update your email "));
-  //     }
-  //     else if(request.body.hiredate !=null){
-  //         next(new Error("you can't update your hiredate "));
-  //     }
-  //     else if(request.body.salary !=null){
-  //         next(new Error("you can't update your salary "));
-  //     }
-  //     else{
-  //     employeeSchema.updateOne(
-  //         {_id: request.body._id},
-  //         {
-  //             $set: {
-  //                 fname:request.body.fname,
-  //                 lname:request.body.lname,
-  //                 // password:hash,
-  //                 birthdate: request.body.birthdate,
-  //                 image: request.file?.path ? request.file.path : ""
-  //             }
-  //         }
-  //     ).then( (data) => {
-  //         if(data.matchedCount == 0)
-  //             next(new Error("employee not found for update"))
-  //         else response.status(200).json({data})
-  //     })
-  //     .catch(error => next(error))
-  // }
-  // }
-  // else {
-  //     next(Error);
-  // }
+    // delete image from server before update
+    if (employee.image && isFirstLog == false) {
+      fs.unlinkSync(employee.image);
+    }
+
+    hash = request.body.password;
+    if (request.body.password)
+      hash = bcrypt.hashSync(request.body.password, saltRounds);
+
+    employeeSchema
+      .updateOne(
+        { _id: request.params.id },
+        {
+          $set: {
+            fname: request.body.fname,
+            lname: request.body.lname,
+            email: request.body.email,
+            password: hash,
+            salary: request.body.salary,
+            birthdate: request.body.birthdate,
+            hiredate: request.body.hiredate,
+            image: request.file?.path ? request.file.path : "",
+          },
+        }
+      )
+      .then((data) => {
+        if (data.matchedCount == 0)
+          next(new Error("employee not found for update"));
+        else response.status(200).json({ data: "updated" });
+      })
+      .catch((error) => next(error));
+  } catch (error) {
+    next(error);
+  }
 };
 
+// delete employee
 exports.deleteEmployee = async (request, response, next) => {
   try {
     let employee = await employeeSchema.findOne(
