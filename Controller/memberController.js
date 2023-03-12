@@ -2,10 +2,9 @@
 const mongoose = require("mongoose");
 require("./../Model/memberModel");
 // Encryot password
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
 const MemberSchema = mongoose.model("members");
 // Delete Image
+const genHashedPassword = require("../helpers/genHashedPassword");
 const fs = require("fs");
 // const uploadImage = require("../helpers/deletingImages");
 
@@ -38,10 +37,7 @@ exports.getMember = (request, response, next) => {
 };
 
 exports.addMember = (request, response, next) => {
-  let hashPassword = bcrypt.hashSync(
-    request.body.password,
-    bcrypt.genSaltSync(saltRounds)
-  );
+  let hashPassword = genHashedPassword(request.body.password);
   if (!request.file) throw new Error("Image Is Required");
   new MemberSchema({
     _id: request.body.id,
@@ -53,7 +49,7 @@ exports.addMember = (request, response, next) => {
     city: request.body.city,
     street: request.body.street,
     building: request.body.building,
-    image: request.file.path ,
+    image: request.file.path,
   })
     .save()
     .then((data) => {
@@ -72,13 +68,10 @@ exports.updateMember = async (request, response, next) => {
     let hashUPassword = memberOldData.password;
     // Hash New Password
     if (request.body.password)
-      hashUPassword = bcrypt.hashSync(
-        request.body.password,
-        bcrypt.genSaltSync(saltRounds)
-      );
+      hashUPassword = genHashedPassword(request.body.password);
     // Update Data
-    if(request.role!="badmin"){
-      delete request.body.email
+    if (request.role != "badmin") {
+      delete request.body.email;
     }
     MemberSchema.updateOne(
       {

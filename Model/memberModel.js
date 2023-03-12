@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 const books = require("./bookModel");
-const employees = require("./employeeModel");
+const genHashedPassword = require("../helpers/genHashedPassword");
 
 const memberSchema = new mongoose.Schema(
   {
@@ -13,7 +13,11 @@ const memberSchema = new mongoose.Schema(
       required: true,
       match: [/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/, " Invalid Email"],
     },
-    password: { type: String, required: true, default: "newMe12_" },
+    password: {
+      type: String,
+      required: true,
+      default: genHashedPassword("newMe12_"),
+    },
     phoneNumber: {
       type: String,
       required: true,

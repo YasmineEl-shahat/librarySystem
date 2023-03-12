@@ -1,26 +1,31 @@
-const { request, response } = require("express");
 const mongoose = require("mongoose");
 require("./../Model/employeeModel");
 const comparePassword = require("../helpers/comparePassword");
+const genHashedPassword = require("../helpers/genHashedPassword");
 
-const bcrypt = require("bcrypt");
 // Delete Image
 const fs = require("fs");
 
 const employeeSchema = mongoose.model("employees");
 
-const saltRounds = 10;
 exports.getAllEmployee = (request, response, next) => {
   employeeSchema
     .find({})
     .then((data) => response.status(201).json({ data }))
     .catch((error) => next(error));
 };
-
+exports.getEmployee = (request, response, next) => {
+  employeeSchema
+    .findOne({ _id: request.params.id })
+    .then((data) => {
+      if (data) response.status(200).json({ data });
+      else throw new Error("employee not found");
+    })
+    .catch((error) => next(error));
+};
 exports.addEmployee = (request, response, next) => {
   let hash = request.body.password;
-  if (request.body.password)
-    hash = bcrypt.hashSync(request.body.password, saltRounds);
+  if (request.body.password) hash = genHashedPassword(request.body.password);
   new employeeSchema({
     _id: request.body._id,
     fname: request.body.fname,
@@ -52,11 +57,7 @@ exports.updateEmployee = async (request, response, next) => {
     // first time login
     if (
       (await comparePassword("newEmp12_", pass)) &&
-      (!request.body.fname ||
-        !request.body.lname ||
-        !request.body.password ||
-        !request.body.birthdate ||
-        !request.file)
+      (!request.body.password || !request.body.birthdate || !request.file)
     ) {
       isFirstLog = true;
       throw new Error("you have to complete your data!");
@@ -68,8 +69,7 @@ exports.updateEmployee = async (request, response, next) => {
     }
 
     hash = request.body.password;
-    if (request.body.password)
-      hash = bcrypt.hashSync(request.body.password, saltRounds);
+    if (request.body.password) hash = genHashedPassword(request.body.password);
 
     employeeSchema
       .updateOne(

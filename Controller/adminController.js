@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const fs = require("fs");
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
+
 require("../Model/adminModel");
 const adminSchema = mongoose.model("admins");
 const comparePassword = require("../helpers/comparePassword");
+const genHashedPassword = require("../helpers/genHashedPassword");
 
 exports.getAllAdmins = (request, response, next) => {
   adminSchema
@@ -23,11 +23,10 @@ exports.getAdmin = (request, response, next) => {
 };
 
 exports.addAdmin = (request, response, next) => {
-  let hashPassword = bcrypt.hashSync(
-    request.body.password,
-    bcrypt.genSaltSync(saltRounds)
-  );
-  if (!request.file) throw new Error("image is required");
+  let hashPassword = request.body.password;
+  if (request.body.password)
+    hashPassword = genHashedPassword(request.body.password);
+
   new adminSchema({
     _id: request.body._id,
     fname: request.body.fname,
@@ -38,7 +37,7 @@ exports.addAdmin = (request, response, next) => {
     salary: request.body.salary,
     birthdate: request.body.birthdate,
     hiredate: request.body.hiredate,
-    image: request.file?.path,
+    image: request.file?.path ?? "",
   })
     .save()
     .then((data) => response.status(201).json({ data }))
@@ -55,19 +54,12 @@ exports.updateAdmin = async (request, response, next) => {
     // first time login
     if (
       (await comparePassword("newAd12_", pass)) &&
-      (!request.body.fname ||
-        !request.body.lname ||
-        !request.body.password ||
-        !request.body.birthdate ||
-        !request.file)
+      (!request.body.password || !request.body.birthdate || !request.file)
     )
       throw new Error("you have to complete your data!");
 
     if (request.body.password)
-      hashPassword = bcrypt.hashSync(
-        request.body.password,
-        bcrypt.genSaltSync(saltRounds)
-      );
+      hashPassword = genHashedPassword(request.body.password);
     if (
       request.role == "admin" &&
       (request.body.hiredate || request.body.salary)
