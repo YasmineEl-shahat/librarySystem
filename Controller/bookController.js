@@ -5,7 +5,7 @@ require("./../Model/bookModel");
 const employeeSchema = mongoose.model("employees");
 require("./../Model/employeeModel");
 const memberSchema = mongoose.model("members");
-const fs = require("fs")
+const fs = require("fs");
 
 //get all books
 exports.getAllBooks = (request, response, next) => {
@@ -126,12 +126,12 @@ exports.getNewBooks = (request, response, next) => {
 };
 
 function addDays(date, days) {
-    console.log(date)
-    date.setDate(date.getDate() + days);
+  console.log(date);
+  date.setDate(date.getDate() + days);
 
-    console.log(date)
-    return date;
-  }
+  console.log(date);
+  return date;
+}
 // Get Books within specific Year
 exports.getBooksYear = (request, response, next) => {
   console.log(typeof Number(request.params.year));
