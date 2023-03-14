@@ -37,19 +37,15 @@ exports.getMember = (request, response, next) => {
 };
 
 exports.addMember = (request, response, next) => {
-  let hashPassword = genHashedPassword(request.body.password);
-  if (!request.file) throw new Error("Image Is Required");
   new MemberSchema({
     _id: request.body.id,
     fullName: request.body.name,
     email: request.body.email,
-    password: hashPassword,
     phoneNumber: request.body.phoneNumber,
     birthdate: request.body.birthdate,
-    city: request.body.city,
-    street: request.body.street,
-    building: request.body.building,
-    image: request.file.path,
+    "fullAddress.city": request.body.city,
+    "fullAddress.street": request.body.street,
+    "fullAddress.building": request.body.building,
   })
     .save()
     .then((data) => {

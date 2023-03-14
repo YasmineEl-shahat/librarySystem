@@ -12,6 +12,7 @@ const adminRoute = require("./Routes/adminRoute");
 const employeeRoute = require("./Routes/employeeRoute");
 const memberRoute = require("./Routes/memberRoute");
 const bookRoute = require("./Routes/bookRoute");
+const bookOperationsRoute = require("./Routes/bookOperationRoute");
 //  open server using express
 const server = express(); // create http server -> http.createServer()
 
@@ -72,6 +73,7 @@ server.use(adminRoute);
 server.use(employeeRoute);
 server.use(memberRoute);
 server.use(bookRoute);
+server.use(bookOperationsRoute);
 
 // not found middleware
 server.use((request, response, next) => {

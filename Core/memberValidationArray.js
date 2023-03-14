@@ -8,6 +8,7 @@ exports.validatePostArray = [
     .withMessage("member fullname should contain at least 6 chars"),
   body("email").isEmail().withMessage("invalid mail"),
   body("password")
+  .optional()
     .isStrongPassword()
     .withMessage(
       "password should contains at least 8 characters, one uppercase letter, one lowercase letter,one special char, and one number"
@@ -18,7 +19,6 @@ exports.validatePostArray = [
     .isLength({ min: 11, max: 11 })
     .withMessage("phoneNumber should contain 11 chars"),
   body("birthdate").isDate().withMessage("invalid birth date"),
-  // body("fullAddress").isObject().withMessage("Address must be an Object"),
   body("city").isString().withMessage("member Address City must be a String"),
   body("street")
     .isString()

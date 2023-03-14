@@ -2,6 +2,7 @@ const express = require("express");
 const {
   checkBadminOrEmployeeOrMember,
   checkBaseAdminOremployee,
+  checkBadminOrAdminOrEmployeeBook,
 } = require("./../Core/auth/authenticationMW");
 const {
   validatePostArray,
@@ -16,9 +17,8 @@ const upload = uploadImage("Members");
 const router = express.Router();
 router
   .route("/members")
-  .get(checkBaseAdminOremployee, controller.getAllMembers)
+  .get(checkBadminOrAdminOrEmployeeBook, controller.getAllMembers)
   .post(
-    upload.single("image"),
     checkBaseAdminOremployee,
     validatePostArray,
     validateMW,

@@ -15,7 +15,6 @@ const memberSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
       default: genHashedPassword("newMe12_"),
     },
     phoneNumber: {
@@ -30,7 +29,7 @@ const memberSchema = new mongoose.Schema(
       street: { type: String, required: true },
       building: { type: String, required: true },
     },
-    image: { type: String, required: [true, "IMAGE IS RQUIRED"] },
+    image: { type: String },
     blockedDate: { type: Date },
     readingBooks: {
       type: Array,
