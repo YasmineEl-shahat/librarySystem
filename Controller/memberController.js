@@ -1,6 +1,7 @@
 // const {request,response}=require('express');
 const mongoose = require("mongoose");
 require("./../Model/memberModel");
+const comparePassword = require("../helpers/comparePassword");
 // Encryot password
 const MemberSchema = mongoose.model("members");
 // Delete Image
@@ -55,20 +56,31 @@ exports.addMember = (request, response, next) => {
 };
 
 exports.updateMember = async (request, response, next) => {
-  const memberOldData = await MemberSchema.findOne(
-    { _id: request.body.id },
-    { image: 1, password: 1, _id: 0 }
-  );
-  if (!memberOldData) next(new Error("Member not found"));
-  else {
+  if (request.role != "badmin") {
+    delete request.body.email;
+  }
+  try {
+    const memberOldData = await MemberSchema.findOne(
+      { _id: request.body.id },
+      { image: 1, password: 1, _id: 0 }
+    );
+    console.log(memberOldData.image);
+    if (!memberOldData) {throw new Error("Member not found");}
+    //  first time login admin update to image
+    if ((memberOldData.image == undefined  && request.file ) || await comparePassword("newMe12_",memberOldData.password) )
+     {
+      console.log("+++");
+      // next(new Error("You Can Not Update Image OR Password Before Member First Login"))
+      throw new Error(
+        "You Can Not Update Image OR Password Before Member First Login"
+      );
+    }
     let hashUPassword = memberOldData.password;
     // Hash New Password
-    if (request.body.password)
+    if (request.body.password){
       hashUPassword = genHashedPassword(request.body.password);
-    // Update Data
-    if (request.role != "badmin") {
-      delete request.body.email;
     }
+    // Update Data
     MemberSchema.updateOne(
       {
         _id: request.body.id,
@@ -80,9 +92,9 @@ exports.updateMember = async (request, response, next) => {
           phoneNumber: request.body.phoneNumber,
           birthdate: request.body.birthdate,
           email: request.body.email,
-          city: request.body.city,
-          street: request.body.street,
-          building: request.body.building,
+          "fullAddress.city": request.body.city,
+          "fullAddress.street": request.body.street,
+          "fullAddress.building": request.body.building,
           image: request.file?.path ? request.file.path : memberOldData.image,
         },
       }
@@ -90,12 +102,14 @@ exports.updateMember = async (request, response, next) => {
       .then((data) => {
         // Delete Old Image
         if (request.file) {
-          const imagePath = memberOldData.image;
-          fs.unlinkSync(imagePath);
+          // const path = memberOldData.image;
+          // fs.unlinkSync(path);
         }
         response.status(200).json({ data: "updated" });
       })
       .catch((error) => next(error));
+  } catch (error) {
+    next(error);
   }
 };
 exports.deleteMember = async (request, response, next) => {
