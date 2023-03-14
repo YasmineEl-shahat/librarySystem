@@ -4,7 +4,7 @@ const searchController = require("./../Controller/searchController");
 const {
   checkAdminOrBadmin,
   checkBadminOrAdminOrEmployee,
-  employeeOrAdmin,
+  checkAdmins,
 } = require("./../Core/auth/authenticationMW");
 const validateMW = require("./../Core/validations/validateMW");
 const {
@@ -21,9 +21,9 @@ const router = express.Router();
 
 router
   .route("/employee")
-  .get(checkAdminOrBadmin, controller.getAllEmployee)
+  .get(checkAdmins, controller.getAllEmployee)
   .post(
-    checkAdminOrBadmin,
+    checkAdmins,
     validatePostArray,
     validateMW,
     controller.addEmployee
@@ -33,22 +33,22 @@ router
   .route("/employee/:id")
   .get(
     intParam,
-    validateMW,
     checkBadminOrAdminOrEmployee,
+    validateMW,
     controller.getEmployee
   )
   .patch(
     upload.single("image"),
     intParam,
+    checkBadminOrAdminOrEmployee,
     validatePatchArray,
     validateMW,
-    checkBadminOrAdminOrEmployee,
     validatePatchArray,
     validateMW,
     controller.updateEmployee
   )
   .delete(
-    checkAdminOrBadmin,
+    checkAdmins,
     validateDelArray,
     validateMW,
     controller.deleteEmployee

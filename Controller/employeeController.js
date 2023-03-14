@@ -56,7 +56,9 @@ exports.updateEmployee = async (request, response, next) => {
       (employee.image == undefined && request.file) ||
       (await comparePassword("newEmp12_", employee.password))
     ) {
-      throw new Error("++++");
+      throw new Error(
+        "You Can Not Update Image OR Password Before Member First Login"
+      );
     }
 
     // delete image from server before update

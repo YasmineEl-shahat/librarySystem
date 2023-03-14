@@ -65,19 +65,21 @@ exports.updateMember = async (request, response, next) => {
       { image: 1, password: 1, _id: 0 }
     );
     console.log(memberOldData.image);
-    if (!memberOldData) {throw new Error("Member not found");}
+    if (!memberOldData) {
+      throw new Error("Member not found");
+    }
     //  first time login admin update to image
-    if ((memberOldData.image == undefined  && request.file ) || await comparePassword("newMe12_",memberOldData.password) )
-     {
-      console.log("+++");
-      // next(new Error("You Can Not Update Image OR Password Before Member First Login"))
+    if (
+      (memberOldData.image == undefined && request.file) ||
+      (await comparePassword("newMe12_", memberOldData.password))
+    ) {
       throw new Error(
         "You Can Not Update Image OR Password Before Member First Login"
       );
     }
     let hashUPassword = memberOldData.password;
     // Hash New Password
-    if (request.body.password){
+    if (request.body.password) {
       hashUPassword = genHashedPassword(request.body.password);
     }
     // Update Data

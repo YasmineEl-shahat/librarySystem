@@ -15,7 +15,10 @@ exports.activateEmployee = async (request, response, next) => {
         "you have add image to complete your data to activate your acount!"
       )
     );
-  } else {
+  }
+  if (request.body.password == "newEmp12_")
+    next(new Error("you have change your password"));
+  else {
     employeeSchema
       .updateOne(
         { _id: request.id },
@@ -41,7 +44,10 @@ exports.activateAdmin = async (request, response, next) => {
         "you have add image to complete your data to activate your acount!"
       )
     );
-  } else {
+  }
+  if (request.body.password == "newAd12_")
+    next(new Error("you have change your password"));
+  else {
     adminSchema
       .updateOne(
         { _id: request.id },
@@ -67,7 +73,10 @@ exports.activateMember = async (request, response, next) => {
         "you have add image to complete your data to activate your acount!"
       )
     );
-  } else {
+  }
+  if (request.body.password == "newMe12_")
+    next(new Error("you have change your password"));
+  else {
     membersSchema
       .updateOne(
         { _id: request.id },
@@ -79,7 +88,7 @@ exports.activateMember = async (request, response, next) => {
         }
       )
       .then((data) => {
-        response.status(200).json({ data: "activate" });
+        response.status(200).json({ data: "activated successfully!" });
       })
       .catch((error) => next(error));
   }
