@@ -97,7 +97,7 @@ exports.readBook = async (request, response, next) => {
       try {
         let bookUpate = await bookSchema.updateOne(
           { _id: book_id },
-          { $inc: { avilable: -1 } }
+          { $inc: { avilable: -1, noOfReading: 1 } }
         );
         let memberData = await memberSchema.findOne({ _id: member_id });
         let readedBefore = memberData.readingBooks.indexOf(book_id) != -1;
