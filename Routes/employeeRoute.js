@@ -23,7 +23,6 @@ router
   .route("/employee")
   .get(checkBadminOrAdminOrEmployee, controller.getAllEmployee)
   .post(
-    upload.single("image"),
     checkAdminOrBadmin,
     validatePostArray,
     validateMW,

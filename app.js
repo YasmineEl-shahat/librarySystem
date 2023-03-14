@@ -6,12 +6,14 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 
 const authenticationMW = require("./Core/auth/authenticationMW");
-const activateMW = require("./Core/auth/activateMW.js")
+const activateMW = require("./Core/auth/activateMW.js");
 const loginRoute = require("./Routes/login");
 const adminRoute = require("./Routes/adminRoute");
 const employeeRoute = require("./Routes/employeeRoute");
 const memberRoute = require("./Routes/memberRoute");
 const bookRoute = require("./Routes/bookRoute");
+const activateRoute = require("./Routes/activateRoute");
+
 //  open server using express
 const server = express(); // create http server -> http.createServer()
 
@@ -63,10 +65,11 @@ server.use(express.urlencoded({ extended: false }));
 server.use(loginRoute);
 // auth middleware
 server.use(authenticationMW);
-// server.use(activateRouter);
-// isActivate
+server.use(activateRoute);
 
-// server.use(activateMW)
+// isActivate
+server.use(activateMW);
+
 // Routes
 server.use(adminRoute);
 server.use(employeeRoute);
