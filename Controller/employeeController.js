@@ -25,8 +25,6 @@ exports.getEmployee = (request, response, next) => {
     .catch((error) => next(error));
 };
 exports.addEmployee = (request, response, next) => {
-  // let hash = request.body.password;
-  // if (request.body.password) hash = genHashedPassword(request.body.password);
   new employeeSchema({
     _id: request.body._id,
     fname: request.body.fname,
@@ -54,11 +52,11 @@ exports.updateEmployee = async (request, response, next) => {
     if (!employee) throw new Error("Employee not found");
 
     //  first time login admin update to image
-    if (employee.image == undefined  && request.body.image ) {
-      console.log("+++")
-      fs.unlinkSync(request.file.path);
-      delete request.file.path;
-      delete request.body.password;
+    if (
+      (employee.image == undefined && request.file) ||
+      (await comparePassword("newEmp12_", employee.password))
+    ) {
+      throw new Error("++++");
     }
 
     // delete image from server before update

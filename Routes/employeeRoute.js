@@ -21,7 +21,7 @@ const router = express.Router();
 
 router
   .route("/employee")
-  .get(checkBadminOrAdminOrEmployee, controller.getAllEmployee)
+  .get(checkAdminOrBadmin, controller.getAllEmployee)
   .post(
     checkAdminOrBadmin,
     validatePostArray,
