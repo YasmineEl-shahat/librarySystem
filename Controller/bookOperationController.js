@@ -100,15 +100,18 @@ exports.readBook = async (request, response, next) => {
           { $inc: { avilable: -1 } }
         );
         let memberData = await memberSchema.findOne({ _id: member_id });
+        let readedBefore = memberData.readingBooks.indexOf(book_id) != -1;
         if (memberData.blockedDate <= new Date(Date.now())) {
-          let memberUpate = await memberSchema.updateOne(
-            { _id: member_id },
-            {
-              $push: {
-                readingBooks: book_id,
-              },
-            }
-          );
+          if (!readedBefore) {
+            let memberUpate = await memberSchema.updateOne(
+              { _id: member_id },
+              {
+                $push: {
+                  readingBooks: book_id,
+                },
+              }
+            );
+          }
           let bookOperationUpdate = await new bookOperation({
             bookId: book_id,
             memberId: member_id,
