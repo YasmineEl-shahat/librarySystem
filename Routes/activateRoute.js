@@ -18,7 +18,7 @@ route("/employee/activate/:id")
 
 router.
 route("/member/activate/:id")
-.patch(uploadImage("member").single("image"),intParam,checkMemberActivate,validateActivateArray,validateMW, controller.activateMember);
+.patch(uploadImage("Members").single("image"),intParam,checkMemberActivate,validateActivateArray,validateMW, controller.activateMember);
 
 
 

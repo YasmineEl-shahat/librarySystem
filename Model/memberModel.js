@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
-const books = require("./bookModel");
+require("./bookModel");
 const genHashedPassword = require("../helpers/genHashedPassword");
+const books = mongoose.model("books");
 
 const memberSchema = new mongoose.Schema(
   {
