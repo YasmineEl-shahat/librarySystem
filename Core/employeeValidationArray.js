@@ -22,7 +22,7 @@ exports.validatePostArray = [
       "password should contains at least 8 characters, one uppercase letter, one lowercase letter,one special char, and one number"
     ),
   body("salary").isNumeric().withMessage("salary should be numeric value"),
-  body("birthdate").isDate().withMessage("invalid birth date"),
+  body("birthdate").optional().isDate().withMessage("invalid birth date"),
   body("hiredate").isDate().withMessage("invalid hire date"),
 ];
 exports.validatePatchArray = [

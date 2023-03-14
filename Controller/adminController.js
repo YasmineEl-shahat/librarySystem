@@ -3,7 +3,6 @@ const fs = require("fs");
 
 require("../Model/adminModel");
 const adminSchema = mongoose.model("admins");
-const comparePassword = require("../helpers/comparePassword");
 const genHashedPassword = require("../helpers/genHashedPassword");
 
 exports.getAllAdmins = (request, response, next) => {
@@ -23,9 +22,9 @@ exports.getAdmin = (request, response, next) => {
 };
 
 exports.addAdmin = (request, response, next) => {
-  let hashPassword = request.body.password;
-  if (request.body.password)
-    hashPassword = genHashedPassword(request.body.password);
+  // let hashPassword = request.body.password;
+  // if (request.body.password)
+  //   hashPassword = genHashedPassword(request.body.password);
 
   new adminSchema({
     _id: request.body._id,
@@ -33,11 +32,10 @@ exports.addAdmin = (request, response, next) => {
     lname: request.body.lname,
     email: request.body.email,
     isBase: request.body.isBase,
-    password: hashPassword,
+    // password: hashPassword,
     salary: request.body.salary,
     birthdate: request.body.birthdate,
     hiredate: request.body.hiredate,
-    image: request.file?.path ?? "",
   })
     .save()
     .then((data) => response.status(201).json({ data }))
@@ -50,13 +48,13 @@ exports.updateAdmin = async (request, response, next) => {
     let pathToImg = null;
     let adminData = await adminSchema.findOne({ _id: request.params.id });
     if (!adminData) throw new Error("Admin not found");
-    let pass = adminData.password;
-    // first time login
-    if (
-      (await comparePassword("newAd12_", pass)) &&
-      (!request.body.password || !request.body.birthdate || !request.file)
-    )
-      throw new Error("you have to complete your data!");
+    // first time login baseAdmin update to image
+    if (adminData.image == undefined && request.body.image) {
+      fs.unlinkSync(request.file.path);
+      delete request.file.path;
+      delete request.body.password;
+
+    }
 
     if (request.body.password)
       hashPassword = genHashedPassword(request.body.password);
@@ -65,8 +63,6 @@ exports.updateAdmin = async (request, response, next) => {
       (request.body.hiredate || request.body.salary)
     )
       throw new Error("you are not allowed to update salary or hiredate!");
-    if (request.role == "admin" && request.body.password == "newAd12_")
-      throw new Error("you have to change the previously created pass");
     if (adminData) {
       pathToImg = adminData.image;
     }

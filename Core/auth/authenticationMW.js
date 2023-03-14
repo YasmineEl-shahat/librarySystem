@@ -26,8 +26,18 @@ module.exports.checkBaseAdmin = (request, response, next) => {
     next();
   } else NotAuthorized(next);
 };
-module.exports.checkAdmin = (request, response, next) => {
-  if (request.role == "admin" && request.id == request.params.id) {
+module.exports.checkAdminsActivate = (request, response, next) => {
+  if (request.role == "admin" && request.id == request.params.id || request.role == "badmin" && request.id == request.params.id) {
+    next();
+  } else NotAuthorized(next);
+};
+module.exports.checkEmployeeActivate = (request, response, next) => {
+  if (request.role == "employee" && request.id == request.params.id) {
+    next();
+  } else NotAuthorized(next);
+};
+module.exports.checkMemberActivate = (request, response, next) => {
+  if (request.role == "member" && request.id == request.params.id) {
     next();
   } else NotAuthorized(next);
 };

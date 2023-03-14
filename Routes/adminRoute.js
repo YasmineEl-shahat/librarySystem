@@ -22,7 +22,6 @@ router
   .all(checkBaseAdmin)
   .get(controller.getAllAdmins)
   .post(
-    upload.single("image"),
     validatePostArray,
     validateMW,
     controller.addAdmin

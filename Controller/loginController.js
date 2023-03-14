@@ -38,7 +38,7 @@ exports.login = async (request, response, next) => {
     if (admin) {
       checkPass = await comparePassword(request.body.password, admin.password);
     } else if (employee) {
-      console.log( request.body.password,employee.password)
+      console.log(request.body.password, employee.password);
       checkPass = await comparePassword(
         request.body.password,
         employee.password
@@ -47,39 +47,40 @@ exports.login = async (request, response, next) => {
       checkPass = await comparePassword(request.body.password, member.password);
     }
     // first time login
-    if (employee && (await comparePassword("newEmp12_", employee.password))) {
-      authResponse(
-        employee._id,
-        "employee",
-        response,
-        ",you have to change the previously created pass"
-      );
-    } else if (member && (await comparePassword("newMe12_", member.password))) {
-      authResponse(
-        member._id,
-        "member",
-        response,
-        ",you have to change the previously created pass"
-      );
-    } else if (
-      admin &&
-      admin.isBase &&
-      (await comparePassword("newAd12_", admin.password))
-    ) {
-      authResponse(
-        admin._id,
-        "badmin",
-        response,
-        ",you have to change the previously created pass"
-      );
-    } else if (admin && (await comparePassword("newAd12_", admin.password))) {
-      authResponse(
-        admin._id,
-        "admin",
-        response,
-        ",you have to change the previously created pass"
-      );
-    } else if (admin && checkPass && admin.isBase)
+    // if (employee && (await comparePassword("newEmp12_", employee.password))) {
+    //   authResponse(
+    //     employee._id,
+    //     "employee",
+    //     response,
+    //     ",you have to change the previously created pass"
+    //   );
+    // } else if (member && (await comparePassword("newMe12_", member.password))) {
+    //   authResponse(
+    //     member._id,
+    //     "member",
+    //     response,
+    //     ",you have to change the previously created pass"
+    //   );
+    // } else if (
+    //   admin &&
+    //   admin.isBase &&
+    //   (await comparePassword("newAd12_", admin.password))
+    // ) {
+    //   authResponse(
+    //     admin._id,
+    //     "badmin",
+    //     response,
+    //     ",you have to change the previously created pass"
+    //   );
+    // } else if (admin && (await comparePassword("newAd12_", admin.password))) {
+    //   authResponse(
+    //     admin._id,
+    //     "admin",
+    //     response,
+    //     ",you have to change the previously created pass"
+    //   );
+    // } else
+    if (admin && checkPass && admin.isBase)
       authResponse(admin._id, "badmin", response);
     else if (admin && checkPass) authResponse(admin._id, "admin", response);
     else if (employee && checkPass)

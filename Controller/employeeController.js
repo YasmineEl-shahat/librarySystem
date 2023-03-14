@@ -25,29 +25,26 @@ exports.getEmployee = (request, response, next) => {
     .catch((error) => next(error));
 };
 exports.addEmployee = (request, response, next) => {
-  let hash = request.body.password;
-  if (request.body.password) hash = genHashedPassword(request.body.password);
+  // let hash = request.body.password;
+  // if (request.body.password) hash = genHashedPassword(request.body.password);
   new employeeSchema({
     _id: request.body._id,
     fname: request.body.fname,
     lname: request.body.lname,
     email: request.body.email,
-    password: hash,
     salary: request.body.salary,
-    // birthdate: request.body.birthdate,
     hiredate: request.body.hiredate,
+    birthdate: request.body.birthdate,
   })
     .save()
     .then((data) => {
-
-      response.status(201).json({ data })
+      response.status(201).json({ data });
     })
     .catch((error) => next(error));
 };
 
 // update employee
 exports.updateEmployee = async (request, response, next) => {
-  let isFirstLog = false;
   if (request.role == "employee") {
     delete request.body.email;
     delete request.body.salary;
@@ -55,18 +52,17 @@ exports.updateEmployee = async (request, response, next) => {
   try {
     let employee = await employeeSchema.findOne({ _id: request.params.id });
     if (!employee) throw new Error("Employee not found");
-    let pass = employee.password;
-    // first time login
-    if (
-      (await comparePassword("newEmp12_", pass)) &&
-      (!request.body.password || !request.body.birthdate || !request.file)
-    ) {
-      isFirstLog = true;
-      throw new Error("you have to complete your data!");
+
+    //  first time login admin update to image
+    if (employee.image == undefined  && request.body.image ) {
+      console.log("+++")
+      fs.unlinkSync(request.file.path);
+      delete request.file.path;
+      delete request.body.password;
     }
 
     // delete image from server before update
-    if (employee.image && isFirstLog == false) {
+    if (employee.image) {
       fs.unlinkSync(employee.image);
     }
 
@@ -82,9 +78,10 @@ exports.updateEmployee = async (request, response, next) => {
             lname: request.body.lname,
             email: request.body.email,
             password: hash,
-            salary: request.body.salary ,
+            salary: request.body.salary,
             birthdate: request.body.birthdate,
-            image: request.file?.path ,
+            hiredate: request.body.hiredate,
+            image: request.file?.path,
           },
         }
       )
