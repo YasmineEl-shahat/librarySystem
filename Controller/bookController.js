@@ -142,8 +142,10 @@ function addDays(date, days) {
 }
 // Get Books within specific Year
 exports.getBooksYear = (request, response, next) => {
-  console.log(typeof Number(request.query.year));
-  const y = Number(request.query.year);
+  const today = new Date();
+  let yearValue = request.query?.year
+    ? Number(request.query.year)
+    : today.getFullYear();
   bookSchema
     .aggregate([
       {
@@ -155,7 +157,7 @@ exports.getBooksYear = (request, response, next) => {
           },
         },
       },
-      { $match: { publishingDate: y } },
+      { $match: { publishingDate: yearValue } },
     ])
     .then((data) => {
       response.status(200).json({ data });

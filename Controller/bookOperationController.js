@@ -106,7 +106,7 @@ exports.borrowBooksList = async (request, response, next) => {
     ? request.query.month
     : today.getMonth() + 1;
 
-  await bookOperation
+  bookOperation
     .aggregate([
       {
         $project: {
@@ -230,14 +230,14 @@ exports.readBooksList = async (request, response, next) => {
     ? request.query.month
     : today.getMonth() + 1;
 
-  await bookOperation
+  bookOperation
     .aggregate([
       {
         $project: {
           _id: 0,
           bookId: 1,
           memberId: 1,
-          type:1,
+          type: 1,
           year: {
             $year: "$createdAt",
           },
