@@ -5,49 +5,100 @@ const bookSchema = mongoose.model("books");
 const bookOperation = mongoose.model("bookOperations");
 const fs = require("fs");
 
-// exports.borrowBooks = async (request, response, next) => {
-//   let book = await bookSchema.findOne(
-//     { _id: request.query.book_id },
-//     { avilable: 1, numOfCopies: 1, _id: 0 }
-//   );
-//   console.log(
-//     request.query.member_id,
-//     request.query.book_id,
-//     "book not found++++++++"
-//   );
-//   if (book == null) next(new Error("book not found"));
-//   else {
-//     // console.log(book.avilable,book.numOfCopies)
-//     if (book.avilable <= book.numOfCopies && book.avilable > 1) {
-//       try {
-//         let bookUpate = await bookSchema.updateOne(
-//           { _id: request.query.book_id },
-//           { $inc: { avilable: -1 } }
-//         );
+//get all books
+exports.getAllBookOperation = (request, response, next) => {
+  bookOperation
+    .find({})
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};
 
-//         let memberUpate = await memberSchema.updateOne(
-//           { _id: request.query.member_id },
-//           {
-//             $push: {
-//               borrowedBooks: {
-//                 deadlineDate: addDays(new Date(Date.now()), 7),
-//                 bookId: request.query.book_id,
-//                 empId: request.id,
-//                 return: false,
-//                 // numOfBorrowed:0,
-//                 // $inc:{  numOfBorrowed:2},
-//               },
-//               // $inc:{`borrowedBooks.$.${numOfBorrowed}` :1},
-//             },
-//           }
-//         );
-//         response.status(200).json({ message: "you borrow book" });
-//       } catch (error) {
-//         next(error);
-//       }
-//     } else next(new Error("book not avilable"));
-//   }
-// }; //borrow
+//get borrowed books
+exports.getBorrowedBook = (request, response, next) => {
+  bookOperation
+    .find({ type: "borrow" })
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};
+//get reading books
+exports.getReadingBook = (request, response, next) => {
+  bookOperation
+    .find({ type: "read" })
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};
+// borrow book operation
+exports.borrowBooks = async (request, response, next) => {
+  let book = await bookSchema.findOne(
+    { _id: request.body.book_id },
+    { avilable: 1, _id: 0 }
+  );
+  let member = await memberSchema.findOne(
+    { _id: request.body.member_id },
+    { blockedDate: 1, borrowedBooks: 1, _id: 0 }
+  );
+  let operation = await bookOperation.findOne(
+    {
+      memberId: request.body.member_id,
+      bookId: request.body.book_id,
+      return: false,
+    },
+    { return: 1, _id: 0 }
+  );
+  if (book == null) next(new Error("book not found"));
+  if (member == null) next(new Error("member not found"));
+  else {
+    console.log(book.avilable, member.blockedDate, operation);
+    console.log(
+      book.avilable > 1 &&
+        (member.blockedDate < new Date(Date.now()) ||
+          member.blockedDate == undefined) &&
+        (operation?.return == false || operation == null)
+    );
+    if (
+      book.avilable > 1 &&
+      (member.blockedDate < new Date(Date.now()) ||
+        member.blockedDate == undefined) &&
+      (operation?.return == true || operation == null)
+    ) {
+      try {
+        await bookSchema.updateOne(
+          { _id: request.body.book_id },
+          { $inc: { avilable: -1, noOfBorrowing: 1 } }
+        );
+        console.log(member.borrowedBooks);
+        let borrowedBefore =
+          member.borrowedBooks.indexOf(request.body.book_id) == -1;
+        if (borrowedBefore) {
+          await memberSchema.updateOne(
+            { _id: request.body.member_id },
+            {
+              $push: {
+                borrowedBooks: request.body.book_id,
+              },
+            }
+          );
+        }
+        new bookOperation({
+          bookId: request.body.book_id,
+          memberId: request.body.member_id,
+          employeeId: request.id,
+          deadlineDate: request.body.deadlineDate,
+          type: "borrow",
+        }).save();
+        response.status(200).json({ message: "you borrow book" });
+      } catch (error) {
+        next(error);
+      }
+    } else next(new Error("you can't borrow book"));
+  }
+}; //borrow
 
 // List Of Borrowed Book
 exports.borrowBooksList = async (request, response, next) => {
@@ -119,7 +170,7 @@ exports.readBook = async (request, response, next) => {
             bookId: book_id,
             memberId: member_id,
             employeeId: request.id,
-            deadlineDate: addDays(new Date(Date.now()), 1),
+            // deadlineDate: addDays(new Date(Date.now()), 1),
             type: "read",
             return: false,
           }).save();
