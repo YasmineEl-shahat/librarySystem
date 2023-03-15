@@ -193,3 +193,62 @@ exports.readBook = async (request, response, next) => {
     } else next(new Error("reading operation refused"));
   }
 };
+
+// return book
+exports.returnBook = async (request, response, next) => {
+  const book_id = request.query.book_id;
+  const member_id = request.query.member_id;
+  let book = await bookSchema.findOne(
+    { _id: book_id },
+    { avilable: 1, _id: 0 }
+  );
+  let member = await memberSchema.findOne(
+    { _id: member_id },
+    { blockedDate: 1, _id: 0 }
+  );
+  let operation = await bookOperation.findOne(
+    {
+      memberId: member_id,
+      bookId: book_id,
+      return: false,
+    },
+    { return: 1, deadlineDate: 1, _id: 0 }
+  );
+
+  if (book == null) next(new Error("book not found"));
+  else if (member == null) next(new Error("member not found"));
+  else if (operation == null)
+    next(new Error("This member didn't take this book before"));
+  else {
+    try {
+      if (operation?.deadlineDate < new Date(Date.now())) {
+        await memberSchema.updateOne(
+          { _id: member_id },
+          {
+            $set: {
+              blockedDate:
+                member.blockedDate == undefined ||
+                member.blockedDate < new Date(Date.now())
+                  ? addDays(new Date(Date.now()), 7)
+                  : addDays(member.blockedDate, 7),
+            },
+          }
+        );
+      }
+      await bookSchema.updateOne({ _id: book_id }, { $inc: { avilable: 1 } });
+      await bookOperation.updateOne(
+        {
+          bookId: book_id,
+          memberId: member_id,
+          return: false,
+        },
+        { $set: { return: true, returnDate: new Date(Date.now()) } }
+      );
+      response
+        .status(200)
+        .json({ message: "return operation completed successfully" });
+    } catch (error) {
+      next(error);
+    }
+  }
+};

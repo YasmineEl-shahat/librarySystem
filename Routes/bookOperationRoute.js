@@ -25,7 +25,7 @@ router
     checkBadminOrAdminOrEmployeeBook,
     bookOperationController.getBorrowedBook
   );
-  router
+router
   .route("/book/reading")
   .get(
     checkBadminOrAdminOrEmployeeBook,
@@ -41,6 +41,10 @@ router
 router
   .route("/book/read")
   .post(checkBadminOrAdminOrEmployeeBook, bookOperationController.readBook);
+
+router
+  .route("/book/return")
+  .post(checkBadminOrAdminOrEmployeeBook, bookOperationController.returnBook);
 
 router
   .route("/book/borrow")
