@@ -85,7 +85,6 @@ module.exports.checkBaseAdminOremployee = (request, response, next) => {
 };
 
 module.exports.checkBadminOrEmployeeOrMember = (request, response, next) => {
-  console.log(request.role);
   if (
     request.role == "badmin" ||
     request.role == "employee" ||

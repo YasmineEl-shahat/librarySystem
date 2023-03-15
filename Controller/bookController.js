@@ -48,12 +48,9 @@ exports.updateBook = async (request, response, next) => {
       { image: 1, _id: 0 }
     );
     if (!imagePath) next(new Error("Book not found"));
-    console.log("path: ", imagePath.image);
     if (imagePath) {
       const pathToImg = imagePath.image;
       fs.unlinkSync(pathToImg);
-    } else {
-      console.log("image not found");
     }
 
     let bookData = await bookSchema
@@ -105,7 +102,6 @@ exports.deleteBook = async (request, response, next) => {
         if (data.deletedCount == 0) {
           next(new Error("book not found"));
         } else response.status(200).json({ data: "deleted" });
-        console.log(data);
       });
   } catch (error) {
     next(error);
@@ -133,13 +129,6 @@ exports.getNewBooks = (request, response, next) => {
     .catch((error) => next(error));
 };
 
-function addDays(date, days) {
-  console.log(date);
-  date.setDate(date.getDate() + days);
-
-  console.log(date);
-  return date;
-}
 // Get Books within specific Year
 exports.getBooksYear = (request, response, next) => {
   const today = new Date();
@@ -184,38 +173,37 @@ exports.groupBooksByYear = (request, response, next) => {
     .catch((error) => next(error));
 };
 
-
-exports.bookSearchFilter=async(request,response,next)=>{
-try{
-  let allBooks=await bookSchema .aggregate([
-    {
-      $project: {
-        _id: 1,
-        title: 1,
-        publishingDate: {
-          $year: "$publishingDate",
+exports.bookSearchFilter = async (request, response, next) => {
+  try {
+    let allBooks = await bookSchema.aggregate([
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          publishingDate: {
+            $year: "$publishingDate",
+          },
+          publisher: 1,
+          category: 1,
+          author: 1,
+          avilable: { $gt: ["avilable", 1] },
         },
-        publisher:1,
-        category:1,
-        author:1,
-        avilable:{$gt:["avilable",1]}
       },
-    },])
+    ]);
 
-  const filters = request.query;
-  let res= allBooks.filter(book => {
-    let isValid=true;
-    for(key in filters){
-      isValid = isValid && book[key] == filters[key];
-    }
-    return isValid;
-  }); response.send(res)}
- 
-  catch (error) {
-           response.status(500).send()
-         }
-}
-
+    const filters = request.query;
+    let res = allBooks.filter((book) => {
+      let isValid = true;
+      for (key in filters) {
+        isValid = isValid && book[key] == filters[key];
+      }
+      return isValid;
+    });
+    response.send(res);
+  } catch (error) {
+    response.status(500).send();
+  }
+};
 
 // exports.bookSearchFilter = (request, response, next) => {
 //   const match = {...request.query}
@@ -227,7 +215,7 @@ try{
 //     if(request.query.category){
 //       match.category=category;
 //     }
-  
+
 //   bookSchema.aggregate([
 //     {
 //       $project: {
@@ -243,7 +231,6 @@ try{
 //       },
 //     },{ $match: match },
 //     ])
-
 
 //     .then((data) => {
 //       response.status(200).json({ data });

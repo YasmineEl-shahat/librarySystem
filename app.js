@@ -40,11 +40,6 @@ server.use(
     origin: "http://127.0.0.1:5500",
   })
 );
-// first MW logging on console
-// server.use((request, response, next) => {
-//   console.log(request.url, request.method);
-//   next();
-// });
 
 morgan("tiny");
 morgan(":method :url :status :res[content-length] - :response-time ms");

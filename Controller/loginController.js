@@ -32,7 +32,6 @@ exports.login = async (request, response, next) => {
   if (admin) {
     checkPass = await comparePassword(request.body.password, admin.password);
   } else if (employee) {
-    console.log(request.body.password, employee.password);
     checkPass = await comparePassword(request.body.password, employee.password);
   } else if (member) {
     checkPass = await comparePassword(request.body.password, member.password);

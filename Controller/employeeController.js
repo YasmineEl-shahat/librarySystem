@@ -116,7 +116,6 @@ exports.deleteEmployee = async (request, response, next) => {
         if (data.deletedCount == 0) {
           next(new Error("employee not found"));
         } else response.status(200).json({ data: "deleted" });
-        console.log(data);
       });
   } catch (error) {
     next(error);

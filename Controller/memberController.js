@@ -30,7 +30,6 @@ exports.getMember = (request, response, next) => {
 exports.getMember = (request, response, next) => {
   MemberSchema.find({ _id: request.params.id })
     .then((data) => {
-      console.log(data);
       if (data.length == 1) response.status(200).json({ data });
       else next(new Error("Member not found"));
     })
@@ -64,7 +63,6 @@ exports.updateMember = async (request, response, next) => {
       { _id: request.body.id },
       { image: 1, password: 1, _id: 0 }
     );
-    console.log(memberOldData.image);
     if (!memberOldData) {
       throw new Error("Member not found");
     }
@@ -122,12 +120,10 @@ exports.deleteMember = async (request, response, next) => {
     );
     if (!imagePath) next(new Error("Member not found"));
     else {
-      console.log(`image path` + imagePath.image);
       if (imagePath) {
         const pathToImg = imagePath.image;
         fs.unlinkSync(pathToImg);
       } else {
-        console.log("image not found");
       }
       MemberSchema.deleteOne({
         _id: request.params.id,
@@ -135,7 +131,6 @@ exports.deleteMember = async (request, response, next) => {
         if (data.deletedCount == 0) {
           next(new Error("Member not found"));
         } else response.status(200).json({ data: "deleted" });
-        console.log(data);
       });
     }
   } catch (error) {
