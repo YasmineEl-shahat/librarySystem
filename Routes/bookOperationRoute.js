@@ -32,12 +32,17 @@ router
     bookOperationController.getReadingBook
   );
 router
-  .route("/borrowedBooks/list/:year?/:month?")
+  .route("/borrowedBooks/list")
   .get(
     checkBadminOrAdminOrEmployeeBook,
     bookOperationController.borrowBooksList
   );
-
+  router
+  .route("/readingBooks/list")
+  .get(
+    checkBadminOrAdminOrEmployeeBook,
+    bookOperationController.readBooksList
+  );
 router
   .route("/book/read")
   .post(checkBadminOrAdminOrEmployeeBook, bookOperationController.readBook);

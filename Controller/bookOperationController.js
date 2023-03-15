@@ -5,6 +5,7 @@ const bookSchema = mongoose.model("books");
 const bookOperation = mongoose.model("bookOperations");
 const fs = require("fs");
 const addDays = require("../helpers/addDays");
+const path = require("path");
 
 //get all books
 exports.getAllBookOperation = (request, response, next) => {
@@ -95,18 +96,24 @@ exports.borrowBooks = async (request, response, next) => {
 
 // List Of Borrowed Book
 exports.borrowBooksList = async (request, response, next) => {
-  const memberData = await memberSchema.findOne({ id: request.id });
+  const memberData = await memberSchema.findOne({ _id: request.query.id });
   if (!memberData) next(new Error("Member not found"));
   const today = new Date();
-  let year = request.query?.year ? request.query.year : today.getFullYear();
-  let month = request.query?.month ? request.query.month : today.getMonth() + 1;
+  let yearValue = request.query?.year
+    ? request.query.year
+    : today.getFullYear();
+  let monthValue = request.query?.month
+    ? request.query.month
+    : today.getMonth() + 1;
 
-  await bookOperation
+  bookOperation
     .aggregate([
       {
         $project: {
           _id: 0,
           bookId: 1,
+          memberId: 1,
+          type: 1,
           year: {
             $year: "$createdAt",
           },
@@ -116,11 +123,28 @@ exports.borrowBooksList = async (request, response, next) => {
         },
       },
       {
+        $lookup: {
+          from: "books",
+          localField: "bookId",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      {
         $match: {
-          id: request.id,
-          return: false,
-          year: year,
-          month: month,
+          memberId: Number(request.query.id),
+          year: yearValue,
+          month: monthValue,
+          type: "borrow",
+        },
+      },
+      {
+        $unwind: "$book",
+      },
+      {
+        $project: {
+          _id: 0,
+          bookTitle: "$book.title",
         },
       },
     ])
@@ -251,4 +275,63 @@ exports.returnBook = async (request, response, next) => {
       next(error);
     }
   }
+};
+// List Of Reading Book
+exports.readBooksList = async (request, response, next) => {
+  const memberData = await memberSchema.findOne({ _id: request.query.id });
+  if (!memberData) next(new Error("Member not found"));
+  const today = new Date();
+  let yearValue = request.query?.year
+    ? request.query.year
+    : today.getFullYear();
+  let monthValue = request.query?.month
+    ? request.query.month
+    : today.getMonth() + 1;
+
+  bookOperation
+    .aggregate([
+      {
+        $project: {
+          _id: 0,
+          bookId: 1,
+          memberId: 1,
+          type: 1,
+          year: {
+            $year: "$createdAt",
+          },
+          month: {
+            $month: "$createdAt",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "books",
+          localField: "bookId",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      {
+        $match: {
+          memberId: Number(request.query.id),
+          year: yearValue,
+          month: monthValue,
+          type: "read",
+        },
+      },
+      {
+        $unwind: "$book",
+      },
+      {
+        $project: {
+          _id: 0,
+          bookTitle: "$book.title",
+        },
+      },
+    ])
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
 };
