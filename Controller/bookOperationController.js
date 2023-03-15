@@ -54,13 +54,6 @@ exports.borrowBooks = async (request, response, next) => {
   if (book == null) next(new Error("book not found"));
   if (member == null) next(new Error("member not found"));
   else {
-    console.log(book.avilable, member.blockedDate, operation);
-    console.log(
-      book.avilable > 1 &&
-        (member.blockedDate < new Date(Date.now()) ||
-          member.blockedDate == undefined) &&
-        (operation?.return == false || operation == null)
-    );
     if (
       book.avilable > 1 &&
       (member.blockedDate < new Date(Date.now()) ||
@@ -72,7 +65,6 @@ exports.borrowBooks = async (request, response, next) => {
           { _id: request.body.book_id },
           { $inc: { avilable: -1, noOfBorrowing: 1 } }
         );
-        console.log(member.borrowedBooks);
         let borrowedBefore =
           member.borrowedBooks.indexOf(request.body.book_id) == -1;
         if (borrowedBefore) {
@@ -145,40 +137,58 @@ exports.readBook = async (request, response, next) => {
     { _id: book_id },
     { avilable: 1, numOfCopies: 1, _id: 0 }
   );
+  let member = await memberSchema.findOne(
+    { _id: member_id },
+    { blockedDate: 1, readingBooks: 1, _id: 0 }
+  );
+  let operation = await bookOperation.findOne(
+    {
+      memberId: member_id,
+      bookId: book_id,
+      return: false,
+    },
+    { return: 1, _id: 0 }
+  );
   if (book == null) next(new Error("book not found"));
+  else if (member == null) next(new Error("member not found"));
   else {
-    if (book.avilable <= book.numOfCopies && book.avilable > 1) {
+    if (
+      book.avilable > 1 &&
+      (member.blockedDate < new Date(Date.now()) ||
+        member.blockedDate == undefined) &&
+      (operation?.return == true || operation == null)
+    ) {
       try {
-        let bookUpate = await bookSchema.updateOne(
+        await bookSchema.updateOne(
           { _id: book_id },
           { $inc: { avilable: -1, noOfReading: 1 } }
         );
-        let memberData = await memberSchema.findOne({ _id: member_id });
-        let readedBefore = memberData.readingBooks.indexOf(book_id) != -1;
-        if (memberData.blockedDate <= new Date(Date.now())) {
-          if (!readedBefore) {
-            let memberUpate = await memberSchema.updateOne(
-              { _id: member_id },
-              {
-                $push: {
-                  readingBooks: book_id,
-                },
-              }
-            );
-          }
-          let bookOperationUpdate = await new bookOperation({
-            bookId: book_id,
-            memberId: member_id,
-            employeeId: request.id,
-            // deadlineDate: addDays(new Date(Date.now()), 1),
-            type: "read",
-            return: false,
-          }).save();
-          response.status(200).json({ message: "book taken for read" });
-        } else throw new Error("you 're blocked from reading or borrowing");
+        await new bookOperation({
+          bookId: book_id,
+          memberId: member_id,
+          employeeId: request.id,
+          deadlineDate: addDays(new Date(Date.now()), 1),
+          type: "read",
+          return: false,
+        }).save();
+        let readedBefore = member.readingBooks.indexOf(book_id) != -1;
+
+        if (!readedBefore) {
+          await memberSchema.updateOne(
+            { _id: member_id },
+            {
+              $push: {
+                readingBooks: book_id,
+              },
+            }
+          );
+        }
+        response
+          .status(200)
+          .json({ message: "reading operation completed successfully" });
       } catch (error) {
         next(error);
       }
-    } else next(new Error("book not avilable"));
+    } else next(new Error("reading operation refused"));
   }
 };

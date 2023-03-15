@@ -15,8 +15,7 @@ exports.activateEmployee = async (request, response, next) => {
         "you have add image to complete your data to activate your acount!"
       )
     );
-  }
-  if (request.body.password == "newEmp12_")
+  } else if (request.body.password == "newEmp12_")
     next(new Error("you have change your password"));
   else {
     employeeSchema
@@ -44,8 +43,7 @@ exports.activateAdmin = async (request, response, next) => {
         "you have add image to complete your data to activate your acount!"
       )
     );
-  }
-  if (request.body.password == "newAd12_")
+  } else if (request.body.password == "newAd12_")
     next(new Error("you have change your password"));
   else {
     adminSchema
@@ -73,8 +71,7 @@ exports.activateMember = async (request, response, next) => {
         "you have add image to complete your data to activate your acount!"
       )
     );
-  }
-  if (request.body.password == "newMe12_")
+  } else if (request.body.password == "newMe12_")
     next(new Error("you have change your password"));
   else {
     membersSchema
