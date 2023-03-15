@@ -16,12 +16,17 @@ const router = express.Router();
 //   .route("/book/borrow")
 //   .get(checkBadminOrAdminOrEmployeeBook, controller.borrowBooks);
 router
-  .route("/borrowedBooks/list/:year?/:month?")
+  .route("/borrowedBooks/list")
   .get(
     checkBadminOrAdminOrEmployeeBook,
     bookOperationController.borrowBooksList
   );
-
+  router
+  .route("/readingBooks/list")
+  .get(
+    checkBadminOrAdminOrEmployeeBook,
+    bookOperationController.readBooksList
+  );
 router
   .route("/book/read")
   .post(checkBadminOrAdminOrEmployeeBook, bookOperationController.readBook);
