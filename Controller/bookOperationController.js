@@ -53,30 +53,33 @@ const fs = require("fs");
 exports.borrowBooksList = async (request, response, next) => {
   const memberData = await memberSchema.findOne({ id: request.id });
   if (!memberData) next(new Error("Member not found"));
+  const today = new Date();
+  let year = request.query?.year ? request.query.year : today.getFullYear();
+  let month = request.query?.month ? request.query.month : today.getMonth() + 1;
 
   await bookOperation
-    .find(
-      { id: request.id },
+    .aggregate([
       {
-        bookId: 1,
-        _id: 0,
-      }
-    )
-    //request.query?.year
-    //request.query?.month
-    //   bookSchema
-    //     .aggregate([
-    //       {
-    //         $project: {
-    //           _id: 0,
-    //           title: 1,
-    //           publishingDate: {
-    //             $year: "$publishingDate",
-    //           },
-    //         },
-    //       },
-    //       { $match: { publishingDate: y } },
-    //     ])
+        $project: {
+          _id: 0,
+          bookId: 1,
+          year: {
+            $year: "$createdAt",
+          },
+          month: {
+            $month: "$createdAt",
+          },
+        },
+      },
+      {
+        $match: {
+          id: request.id,
+          return: false,
+          year: year,
+          month: month,
+        },
+      },
+    ])
     .then((data) => {
       response.status(200).json({ data });
     })
