@@ -181,3 +181,70 @@ exports.groupBooksByYear = (request, response, next) => {
     })
     .catch((error) => next(error));
 };
+
+
+exports.bookSearchFilter=async(request,response,next)=>{
+try{
+  let allBooks=await bookSchema .aggregate([
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        publishingDate: {
+          $year: "$publishingDate",
+        },
+        publisher:1,
+        category:1,
+        author:1,
+        avilable:{$gt:["avilable",1]}
+      },
+    },])
+
+  const filters = request.query;
+  let res= allBooks.filter(book => {
+    let isValid=true;
+    for(key in filters){
+      isValid = isValid && book[key] == filters[key];
+    }
+    return isValid;
+  }); response.send(res)}
+ 
+  catch (error) {
+           response.status(500).send()
+         }
+}
+
+
+// exports.bookSearchFilter = (request, response, next) => {
+//   const match = {...request.query}
+//   console.log(match);
+//      if(request.query.year){
+//        const year = Number(request.query.year);
+//        match.year=year;
+//    }
+//     if(request.query.category){
+//       match.category=category;
+//     }
+  
+//   bookSchema.aggregate([
+//     {
+//       $project: {
+//         _id: 1,
+//         title: 1,
+//         publishingDate: {
+//           $year: "$publishingDate",
+//         },
+//         publisher:1,
+//         category:1,
+//         author:1,
+//         avilable:{$gt:["avilable",1]}
+//       },
+//     },{ $match: match },
+//     ])
+
+
+//     .then((data) => {
+//       response.status(200).json({ data });
+//     })
+//     .catch((error) => next(error));
+// };

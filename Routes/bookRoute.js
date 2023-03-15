@@ -40,5 +40,7 @@ router
   .get(checkBadminOrAdminOrEmployeeBook, controller.getNewBooks);
 // router.route("/booksYearGroup").get(checkBadminOrAdminOrEmployeeBook,controller.groupBooksByYear)
 
-router.route("/booksYear").get(controller.getBooksYear);
+router.route("/getNewBooks").get(checkBadminOrAdminOrEmployeeBook,controller.getNewBooks)
+
+router.route("/bookSearchFilter/:publishingDate?/:category?/:publisher?/:auther?/:avilable?").get(controller.bookSearchFilter)
 module.exports = router;

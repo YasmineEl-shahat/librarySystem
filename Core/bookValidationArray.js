@@ -75,3 +75,7 @@ exports.validatePatchArray = [
     .isInt()
     .withMessage("book shelfNo should be integer"),
 ];
+
+exports.validateBookOperation =[
+  body("deadlineDate").isDate().withMessage("You should enter deadlineDate")
+]
