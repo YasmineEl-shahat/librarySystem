@@ -6,10 +6,12 @@ const employeeSchema = mongoose.model("employees");
 require("./../Model/employeeModel");
 const memberSchema = mongoose.model("members");
 const fs = require("fs");
+const { request } = require("http");
+const { response } = require("express");
 
 //get all books
 exports.getAllBooks = (request, response, next) => {
-  bookSchema
+   bookSchema
     .find({})
     .then((data) => {
       response.status(200).json({ data });
@@ -133,24 +135,91 @@ function addDays(date, days) {
   return date;
 }
 // Get Books within specific Year
-exports.getBooksYear = (request, response, next) => {
-  console.log(typeof Number(request.params.year));
-  const y = Number(request.params.year);
-  bookSchema
-    .aggregate([
-      {
-        $project: {
-          _id: 0,
-          title: 1,
-          publishingDate: {
-            $year: "$publishingDate",
-          },
+// exports.getBooksYear = (request, response, next) => {
+//   console.log(typeof Number(request.params.year));
+//   const y = Number(request.params.year);
+//   bookSchema
+//     .aggregate([
+//       {
+//         $project: {
+//           _id: 0,
+//           title: 1,
+//           publishingDate: {
+//             $year: "$publishingDate",
+//           },
+//         },
+//       },
+//       { $match: { publishingDate: y } },
+//     ])
+//     .then((data) => {
+//       response.status(200).json({ data });
+//     })
+//     .catch((error) => next(error));
+// };
+
+
+exports.bookSearchFilter=async(request,response,next)=>{
+try{
+  let allBooks=await bookSchema .aggregate([
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        publishingDate: {
+          $year: "$publishingDate",
         },
+        publisher:1,
+        category:1,
+        author:1,
+        avilable:{$gt:["avilable",1]}
       },
-      { $match: { publishingDate: y } },
-    ])
-    .then((data) => {
-      response.status(200).json({ data });
-    })
-    .catch((error) => next(error));
-};
+    },])
+
+  const filters = request.query;
+  let res= allBooks.filter(book => {
+    let isValid=true;
+    for(key in filters){
+      isValid = isValid && book[key] == filters[key];
+    }
+    return isValid;
+  }); response.send(res)}
+ 
+  catch (error) {
+           response.status(500).send()
+         }
+}
+
+
+// exports.bookSearchFilter = (request, response, next) => {
+//   const match = {...request.query}
+//   console.log(match);
+//      if(request.query.year){
+//        const year = Number(request.query.year);
+//        match.year=year;
+//    }
+//     if(request.query.category){
+//       match.category=category;
+//     }
+  
+//   bookSchema.aggregate([
+//     {
+//       $project: {
+//         _id: 1,
+//         title: 1,
+//         publishingDate: {
+//           $year: "$publishingDate",
+//         },
+//         publisher:1,
+//         category:1,
+//         author:1,
+//         avilable:{$gt:["avilable",1]}
+//       },
+//     },{ $match: match },
+//     ])
+
+
+//     .then((data) => {
+//       response.status(200).json({ data });
+//     })
+//     .catch((error) => next(error));
+// };

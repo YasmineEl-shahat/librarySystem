@@ -18,5 +18,6 @@ router.route("/books/:id")
 .delete(checkBadminOrAdminOrEmployeeBook,validateMW,controller.deleteBook)
 
 router.route("/getNewBooks").get(checkBadminOrAdminOrEmployeeBook,controller.getNewBooks)
-router.route("/getBooksYear/:year").get(controller.getBooksYear)
+
+router.route("/bookSearchFilter/:publishingDate?/:category?/:publisher?/:auther?/:avilable?").get(controller.bookSearchFilter)
 module.exports = router;
