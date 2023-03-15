@@ -47,6 +47,7 @@ const memberSchema = new mongoose.Schema(
       },
     },
   },
+
   {
     timestamps: true,
   }

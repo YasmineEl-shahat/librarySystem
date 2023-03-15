@@ -6,12 +6,10 @@ const employeeSchema = mongoose.model("employees");
 require("./../Model/employeeModel");
 const memberSchema = mongoose.model("members");
 const fs = require("fs");
-const { request } = require("http");
-const { response } = require("express");
 
 //get all books
 exports.getAllBooks = (request, response, next) => {
-   bookSchema
+  bookSchema
     .find({})
     .then((data) => {
       response.status(200).json({ data });
@@ -49,6 +47,7 @@ exports.updateBook = async (request, response, next) => {
       { _id: request.body.id },
       { image: 1, _id: 0 }
     );
+    if (!imagePath) next(new Error("Book not found"));
     console.log("path: ", imagePath.image);
     if (imagePath) {
       const pathToImg = imagePath.image;
@@ -115,12 +114,19 @@ exports.deleteBook = async (request, response, next) => {
 
 // Get New Arrived Books
 exports.getNewBooks = (request, response, next) => {
-  let beforeMonth = new Date();
-  beforeMonth.setMonth(beforeMonth.getMonth() - 1);
+  let date = new Date();
+  date.setDate(date.getDate() - 7);
   bookSchema
-    .find({
-      createdAt: { $gte: beforeMonth },
-    })
+    .find(
+      {
+        createdAt: { $gte: date },
+      },
+      {
+        _id: 0,
+        title: 1,
+        auther: 1,
+      }
+    )
     .then((data) => {
       response.status(200).json({ data });
     })
@@ -135,27 +141,46 @@ function addDays(date, days) {
   return date;
 }
 // Get Books within specific Year
-// exports.getBooksYear = (request, response, next) => {
-//   console.log(typeof Number(request.params.year));
-//   const y = Number(request.params.year);
-//   bookSchema
-//     .aggregate([
-//       {
-//         $project: {
-//           _id: 0,
-//           title: 1,
-//           publishingDate: {
-//             $year: "$publishingDate",
-//           },
-//         },
-//       },
-//       { $match: { publishingDate: y } },
-//     ])
-//     .then((data) => {
-//       response.status(200).json({ data });
-//     })
-//     .catch((error) => next(error));
-// };
+exports.getBooksYear = (request, response, next) => {
+  console.log(typeof Number(request.query.year));
+  const y = Number(request.query.year);
+  bookSchema
+    .aggregate([
+      {
+        $project: {
+          _id: 0,
+          title: 1,
+          publishingDate: {
+            $year: "$publishingDate",
+          },
+        },
+      },
+      { $match: { publishingDate: y } },
+    ])
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};
+
+// Get Books Filtered By Year
+exports.groupBooksByYear = (request, response, next) => {
+  bookSchema
+    .aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: "$publishingDate" },
+          },
+          ListOfNames: { $push: { Name: "$title", Author: "$auther" } },
+        },
+      },
+    ])
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};
 
 
 exports.bookSearchFilter=async(request,response,next)=>{
