@@ -50,7 +50,6 @@ exports.validatePatchArray = [
     .isLength({ min: 11, max: 11 })
     .withMessage("phoneNumber should contain 11 chars"),
   body("birthdate").optional().isDate().withMessage("invalid birth date"),
-  // body("fullAddress").optional().isObject().withMessage("Address must be an Object"),
   body("city")
     .optional()
     .isString()

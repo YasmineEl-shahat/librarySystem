@@ -47,12 +47,10 @@ exports.updateBook = async (request, response, next) => {
       { _id: request.body.id },
       { image: 1, _id: 0 }
     );
-    console.log("path: ", imagePath.image);
+    if (!imagePath) next(new Error("Book not found"));
     if (imagePath) {
       const pathToImg = imagePath.image;
       fs.unlinkSync(pathToImg);
-    } else {
-      console.log("image not found");
     }
 
     let bookData = await bookSchema
@@ -104,7 +102,6 @@ exports.deleteBook = async (request, response, next) => {
         if (data.deletedCount == 0) {
           next(new Error("book not found"));
         } else response.status(200).json({ data: "deleted" });
-        console.log(data);
       });
   } catch (error) {
     next(error);
@@ -113,29 +110,31 @@ exports.deleteBook = async (request, response, next) => {
 
 // Get New Arrived Books
 exports.getNewBooks = (request, response, next) => {
-  let beforeMonth = new Date();
-  beforeMonth.setMonth(beforeMonth.getMonth() - 1);
+  let date = new Date();
+  date.setDate(date.getDate() - 7);
   bookSchema
-    .find({
-      createdAt: { $gte: beforeMonth },
-    })
+    .find(
+      {
+        createdAt: { $gte: date },
+      },
+      {
+        _id: 0,
+        title: 1,
+        auther: 1,
+      }
+    )
     .then((data) => {
       response.status(200).json({ data });
     })
     .catch((error) => next(error));
 };
 
-function addDays(date, days) {
-  console.log(date);
-  date.setDate(date.getDate() + days);
-
-  console.log(date);
-  return date;
-}
 // Get Books within specific Year
 exports.getBooksYear = (request, response, next) => {
-  console.log(typeof Number(request.params.year));
-  const y = Number(request.params.year);
+  const today = new Date();
+  let yearValue = request.query?.year
+    ? Number(request.query.year)
+    : today.getFullYear();
   bookSchema
     .aggregate([
       {
@@ -147,7 +146,7 @@ exports.getBooksYear = (request, response, next) => {
           },
         },
       },
-      { $match: { publishingDate: y } },
+      { $match: { publishingDate: yearValue } },
     ])
     .then((data) => {
       response.status(200).json({ data });
@@ -174,6 +173,24 @@ exports.bookSearch = (request, response, error) => {
     })
     .catch((error) => next(error));
 };
+// Get Books Filtered By Year
+exports.groupBooksByYear = (request, response, next) => {
+  bookSchema
+    .aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: "$publishingDate" },
+          },
+          ListOfNames: { $push: { Name: "$title", Author: "$auther" } },
+        },
+      },
+    ])
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};
 
 exports.availableBook = (request, response, next) => {
   bookSchema
@@ -183,3 +200,67 @@ exports.availableBook = (request, response, next) => {
     })
     .catch((error) => next(error));
 };
+exports.bookSearchFilter = async (request, response, next) => {
+  try {
+    let allBooks = await bookSchema.aggregate([
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          publishingDate: {
+            $year: "$publishingDate",
+          },
+          publisher: 1,
+          category: 1,
+          author: 1,
+          avilable: { $gt: ["avilable", 1] },
+        },
+      },
+    ]);
+
+    const filters = request.query;
+    let res = allBooks.filter((book) => {
+      let isValid = true;
+      for (key in filters) {
+        isValid = isValid && book[key] == filters[key];
+      }
+      return isValid;
+    });
+    response.send(res);
+  } catch (error) {
+    response.status(500).send();
+  }
+};
+
+// exports.bookSearchFilter = (request, response, next) => {
+//   const match = {...request.query}
+//   console.log(match);
+//      if(request.query.year){
+//        const year = Number(request.query.year);
+//        match.year=year;
+//    }
+//     if(request.query.category){
+//       match.category=category;
+//     }
+
+//   bookSchema.aggregate([
+//     {
+//       $project: {
+//         _id: 1,
+//         title: 1,
+//         publishingDate: {
+//           $year: "$publishingDate",
+//         },
+//         publisher:1,
+//         category:1,
+//         author:1,
+//         avilable:{$gt:["avilable",1]}
+//       },
+//     },{ $match: match },
+//     ])
+
+//     .then((data) => {
+//       response.status(200).json({ data });
+//     })
+//     .catch((error) => next(error));
+// };

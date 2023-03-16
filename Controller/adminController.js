@@ -22,17 +22,12 @@ exports.getAdmin = (request, response, next) => {
 };
 
 exports.addAdmin = (request, response, next) => {
-  // let hashPassword = request.body.password;
-  // if (request.body.password)
-  //   hashPassword = genHashedPassword(request.body.password);
-
   new adminSchema({
     _id: request.body._id,
     fname: request.body.fname,
     lname: request.body.lname,
     email: request.body.email,
     isBase: request.body.isBase,
-    // password: hashPassword,
     salary: request.body.salary,
     birthdate: request.body.birthdate,
     hiredate: request.body.hiredate,
@@ -49,11 +44,13 @@ exports.updateAdmin = async (request, response, next) => {
     let adminData = await adminSchema.findOne({ _id: request.params.id });
     if (!adminData) throw new Error("Admin not found");
     // first time login baseAdmin update to image
-    if (adminData.image == undefined && request.body.image) {
-      fs.unlinkSync(request.file.path);
-      delete request.file.path;
-      delete request.body.password;
-
+    if (
+      (adminData.image == undefined && request.file) ||
+      (await comparePassword("newAd12_", adminData.password))
+    ) {
+      throw new Error(
+        "You Can Not Update Image OR Password Before Member First Login"
+      );
     }
 
     if (request.body.password)
