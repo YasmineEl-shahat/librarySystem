@@ -64,6 +64,13 @@ router
     validateMW,
     bookOperationController.borrowBooks
   );
+  
+router
+.route("/borrowedBooks/current")
+.get(
+  bookOperationController.currentBorrowedBooks
+);
+
 module.exports = router;
 
 
