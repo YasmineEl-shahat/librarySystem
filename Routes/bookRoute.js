@@ -39,9 +39,22 @@ router
   .route("/newBooks")
   .get(checkBadminOrAdminOrEmployeeBook, controller.getNewBooks);
 // router.route("/booksYearGroup").get(checkBadminOrAdminOrEmployeeBook,controller.groupBooksByYear)
-router.route("/booksYear").get(checkBadminOrAdminOrEmployeeBook,controller.getBooksYear)
+router
+  .route("/booksYear")
+  .get(checkBadminOrAdminOrEmployeeBook, controller.getBooksYear);
 
-router.route("/getNewBooks").get(checkBadminOrAdminOrEmployeeBook,controller.getNewBooks)
+router
+  .route("/getNewBooks")
+  .get(checkBadminOrAdminOrEmployeeBook, controller.getNewBooks);
+router.route("/getBooksYear/:year").get(controller.getBooksYear);
 
-router.route("/bookSearchFilter/:publishingDate?/:category?/:publisher?/:auther?/:avilable?").get(controller.bookSearchFilter)
+router
+  .route("/searchBook/:title?/:publisher?/:auther?")
+  .get(controller.bookSearch);
+router.route("/AvailableBooks").get(controller.availableBook);
+router
+  .route(
+    "/bookSearchFilter/:publishingDate?/:category?/:publisher?/:auther?/:avilable?"
+  )
+  .get(controller.bookSearchFilter);
 module.exports = router;

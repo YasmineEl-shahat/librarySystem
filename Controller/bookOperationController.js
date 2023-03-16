@@ -218,6 +218,64 @@ exports.readBook = async (request, response, next) => {
   }
 };
 
+// return book
+exports.returnBook = async (request, response, next) => {
+  const book_id = request.query.book_id;
+  const member_id = request.query.member_id;
+  let book = await bookSchema.findOne(
+    { _id: book_id },
+    { avilable: 1, _id: 0 }
+  );
+  let member = await memberSchema.findOne(
+    { _id: member_id },
+    { blockedDate: 1, _id: 0 }
+  );
+  let operation = await bookOperation.findOne(
+    {
+      memberId: member_id,
+      bookId: book_id,
+      return: false,
+    },
+    { return: 1, deadlineDate: 1, _id: 0 }
+  );
+
+  if (book == null) next(new Error("book not found"));
+  else if (member == null) next(new Error("member not found"));
+  else if (operation == null)
+    next(new Error("This member didn't take this book before"));
+  else {
+    try {
+      if (operation?.deadlineDate < new Date(Date.now())) {
+        await memberSchema.updateOne(
+          { _id: member_id },
+          {
+            $set: {
+              blockedDate:
+                member.blockedDate == undefined ||
+                member.blockedDate < new Date(Date.now())
+                  ? addDays(new Date(Date.now()), 7)
+                  : addDays(member.blockedDate, 7),
+            },
+          }
+        );
+      }
+      await bookSchema.updateOne({ _id: book_id }, { $inc: { avilable: 1 } });
+      await bookOperation.updateOne(
+        {
+          bookId: book_id,
+          memberId: member_id,
+          return: false,
+        },
+        { $set: { return: true, returnDate: new Date(Date.now()) } }
+      );
+      response
+        .status(200)
+        .json({ message: "return operation completed successfully" });
+    } catch (error) {
+      next(error);
+    }
+  }
+};
 // List Of Reading Book
 exports.readBooksList = async (request, response, next) => {
   const memberData = await memberSchema.findOne({ _id: request.query.id });
@@ -277,40 +335,57 @@ exports.readBooksList = async (request, response, next) => {
     })
     .catch((error) => next(error));
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+exports.searchBorrowedBook = (request, response, next) => {
+  bookOperation
+    .aggregate([
+      {
+        $project: {
+          employeeId: 1,
+          memberId: 1,
+          bookId: 1,
+          return: 1,
+          type: 1,
+          _id: 0,
+        },
+      },
+      {
+        $lookup: {
+          from: "employees",
+          localField: "employeeId",
+          foreignField: "_id",
+          as: "emp",
+        },
+      },
+      { $unwind: "$emp" },
+      {
+        $lookup: {
+          from: "members",
+          localField: "memberId",
+          foreignField: "_id",
+          as: "member",
+        },
+      },
+      { $unwind: "$member" },
+      {
+        $lookup: {
+          from: "books",
+          localField: "bookId",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      { $unwind: "$book" },
+      { $match: { return: false, type: "borrow" } },
+      {
+        $project: {
+          employeeName: "$emp.fname",
+          memberName: "$member.fullName",
+          bookName: "$book.title",
+        },
+      },
+    ])
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};

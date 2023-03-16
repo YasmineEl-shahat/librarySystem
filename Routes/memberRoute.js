@@ -36,4 +36,7 @@ router
   .route("/members/:id")
   .get(checkBadminOrEmployeeOrMember, validateMW, controller.getMember)
   .delete(checkBaseAdminOremployee, validateMW, controller.deleteMember);
+
+  /////////nabila//////////
+  router.route("/searchMember/:fullName?/:email?").get(controller.memberSearch);
 module.exports = router;

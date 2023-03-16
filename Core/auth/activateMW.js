@@ -8,7 +8,6 @@ const employeeSchema = mongoose.model("employees");
 const membersSchema = mongoose.model("members");
 
 module.exports = async (request, response, next) => {
-  console.log(request.role);
   // check activate admin or badmin
   if (request.role == "admin" || request.role == "badmin") {
     const admin = await adminSchema.findOne(

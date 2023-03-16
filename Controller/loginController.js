@@ -11,11 +11,10 @@ const comparePassword = require("../helpers/comparePassword");
 
 let sk = process.env.SECRET_KEY || "SK";
 
-function authResponse(id, role, response, errorMsg) {
+function authResponse(id, role, response) {
   let token = jwt.sign({ id: id, role: role }, sk, { expiresIn: "3h" });
   response.status(200).json({
-    message:
-      errorMsg == undefined ? "Authenticated" : "Authenticated" + errorMsg,
+    message: "Authenticated",
     token,
   });
 }
@@ -32,7 +31,6 @@ exports.login = async (request, response, next) => {
   if (admin) {
     checkPass = await comparePassword(request.body.password, admin.password);
   } else if (employee) {
-    console.log(request.body.password, employee.password);
     checkPass = await comparePassword(request.body.password, employee.password);
   } else if (member) {
     checkPass = await comparePassword(request.body.password, member.password);
