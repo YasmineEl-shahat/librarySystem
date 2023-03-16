@@ -335,37 +335,25 @@ exports.readBooksList = async (request, response, next) => {
     })
     .catch((error) => next(error));
 };
-exports.searchBorrowedBook = (request, response, next) => {
+// Get Books within specific Year
+exports.mostBorrowedBook = (request, response, next) => {
+  const today = new Date();
+  let yearValue = request.query?.year
+    ? Number(request.query.year)
+    : today.getFullYear();
   bookOperation
     .aggregate([
       {
         $project: {
-          employeeId: 1,
-          memberId: 1,
-          bookId: 1,
-          return: 1,
-          type: 1,
           _id: 0,
+          bookId: 1,
+          type: 1,
+          year: {
+            $year: "$createdAt",
+          },
         },
       },
-      {
-        $lookup: {
-          from: "employees",
-          localField: "employeeId",
-          foreignField: "_id",
-          as: "emp",
-        },
-      },
-      { $unwind: "$emp" },
-      {
-        $lookup: {
-          from: "members",
-          localField: "memberId",
-          foreignField: "_id",
-          as: "member",
-        },
-      },
-      { $unwind: "$member" },
+      { $match: { year: yearValue, type: "borrow" } },
       {
         $lookup: {
           from: "books",
@@ -374,15 +362,18 @@ exports.searchBorrowedBook = (request, response, next) => {
           as: "book",
         },
       },
-      { $unwind: "$book" },
-      { $match: { return: false, type: "borrow" } },
+      {
+        $unwind: "$book",
+      },
+
       {
         $project: {
-          employeeName: "$emp.fname",
-          memberName: "$member.fullName",
-          bookName: "$book.title",
+          title: "$book.title",
+          borrowing: "$book.noOfBorrowing",
         },
       },
+      { $sort: { borrowing: -1 } },
+      { $limit: 1 },
     ])
     .then((data) => {
       response.status(200).json({ data });

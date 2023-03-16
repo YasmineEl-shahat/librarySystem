@@ -22,12 +22,7 @@ const router = express.Router();
 router
   .route("/employee")
   .get(checkAdmins, controller.getAllEmployee)
-  .post(
-    checkAdmins,
-    validatePostArray,
-    validateMW,
-    controller.addEmployee
-  );
+  .post(checkAdmins, validatePostArray, validateMW, controller.addEmployee);
 
 router
   .route("/employee/:id")
@@ -47,13 +42,9 @@ router
     validateMW,
     controller.updateEmployee
   )
-  .delete(
-    checkAdmins,
-    validateDelArray,
-    validateMW,
-    controller.deleteEmployee
-  );
+  .delete(checkAdmins, validateDelArray, validateMW, controller.deleteEmployee);
 
+router.route("/search/:data?").get(checkAdmins, controller.autoComplete);
 module.exports = router;
 
 // mongodb://127.0.0.1:27017/libraryDB
