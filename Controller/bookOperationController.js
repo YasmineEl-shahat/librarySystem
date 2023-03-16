@@ -335,7 +335,7 @@ exports.readBooksList = async (request, response, next) => {
     })
     .catch((error) => next(error));
 };
-// Get Books within specific Year
+// Get mostBorrowedBook within specific Year
 exports.mostBorrowedBook = (request, response, next) => {
   const today = new Date();
   let yearValue = request.query?.year
@@ -394,24 +394,24 @@ exports.currentBorrowedBooks = async (request, response, next) => {
           bookId: 1,
           memberId: 1,
           type: 1,
-          exceed:{$gt:[today,"deadlineDate"]},
-          returnDate:1, 
-          return:1 
+          exceed: { $gt: [today, "deadlineDate"] },
+          returnDate: 1,
+          return: 1,
         },
-      }, 
-  
+      },
+
       {
         $match: {
           memberId: Number(request.query.id),
-          type:"borrow"
+          type: "borrow",
         },
       },
       {
         $group: {
-          "_id":"$bookId" ,
-          count: { $count: { } },
-          books: { $push: "$$ROOT" }
-       }
+          _id: "$bookId",
+          count: { $count: {} },
+          books: { $push: "$$ROOT" },
+        },
       },
       {
         $match: {
@@ -434,11 +434,11 @@ exports.currentBorrowedBooks = async (request, response, next) => {
         $project: {
           _id: 0,
           bookTitle: "$book.title",
-          auther:"$book.auther",
-          publisher:"$book.publisher",
-          category:"$book.category",
-          exceed:{$gt:[today,"deadlineDate"]},
-          count:"$count"
+          auther: "$book.auther",
+          publisher: "$book.publisher",
+          category: "$book.category",
+          exceed: { $gt: [today, "deadlineDate"] },
+          count: "$count",
         },
       },
     ])
