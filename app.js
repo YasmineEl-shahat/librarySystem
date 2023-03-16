@@ -21,7 +21,7 @@ const server = express(); // create http server -> http.createServer()
 let port = process.env.port || 8080;
 mongoose.set("strictQuery", true);
 mongoose
-  .connect("mongodb://127.0.0.1:27017/libraryDB")
+  .connect("mongodb+srv://nabila:root@cluster0.xnazlrq.mongodb.net/?retryWrites=true&w=majority")
   .then(() => {
     console.log("DB connected");
     // listen port

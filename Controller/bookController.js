@@ -154,3 +154,32 @@ exports.getBooksYear = (request, response, next) => {
     })
     .catch((error) => next(error));
 };
+
+////////////////nabila////////////////
+exports.bookSearch = (request, response, error) => {
+  // console.log(request.query);
+  let searchQuery = { ...request.query };
+  let searchProperty = ["auther", "publisher", "title"];
+  searchProperty.forEach((el) => {
+    if (searchQuery[el]) {
+    } else {
+      delete searchQuery[el];
+    }
+  });
+  // console.log(searchQuery);
+  bookSchema
+    .find(searchQuery, { avilable: 1, numOfCopies: 1, noOfBorrowing: 1 })
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};
+
+exports.availableBook = (request, response, next) => {
+  bookSchema
+    .find({ avilable: { $gt: 1 } }, { title: 1, avilable: 1, _id: 0 })
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};

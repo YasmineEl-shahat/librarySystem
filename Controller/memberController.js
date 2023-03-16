@@ -128,3 +128,23 @@ exports.deleteMember = async (request, response, next) => {
 };
 
 //END of Basic Functions
+
+//////////////nabila///////////////
+exports.memberSearch=(request,response,error)=>{
+  // console.log(request.query)
+  let searchQuery ={...request.query};
+  let searchProperty=["fullName","email"];
+  searchProperty.forEach(el=>{
+      if(searchQuery[el]){}
+      else{
+          delete searchQuery[el];
+      }
+  })
+  console.log(searchQuery);
+  MemberSchema.find(searchQuery).limit(5)
+  .then(data=>{
+      response.status(200).json({data})
+  })
+  .catch(error=>next(error))
+}
+

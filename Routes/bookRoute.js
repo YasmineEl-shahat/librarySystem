@@ -19,4 +19,15 @@ router.route("/books/:id")
 
 router.route("/getNewBooks").get(checkBadminOrAdminOrEmployeeBook,controller.getNewBooks)
 router.route("/getBooksYear/:year").get(controller.getBooksYear)
+
+
+
+
+
+
+
+
+////////nabila//////////////
+router.route("/searchBook/:title?/:publisher?/:auther?").get(controller.bookSearch);
+router.route("/AvailableBooks").get(controller.availableBook);
 module.exports = router;

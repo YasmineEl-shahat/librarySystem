@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
 require("./../Model/bookOperations");
 const memberSchema = mongoose.model("members");
+const employeeSchema = mongoose.model("employees");
 const bookSchema = mongoose.model("books");
 const bookOperation = mongoose.model("bookOperations");
 const fs = require("fs");
+const { request } = require("http");
+const { response } = require("express");
 
 // exports.borrowBooks =async(request,response,next)=>{
 
@@ -20,7 +23,7 @@ const fs = require("fs");
 //                     {_id:request.query.member_id},
 //                     {
 //                         $push:{
-//                             borrowedBooks:{ 
+//                             borrowedBooks:{
 //                                 deadlineDate:addDays( new Date(Date.now()),7),
 //                                 bookId: request.query.book_id,
 //                                 empId: request.id,
@@ -29,7 +32,7 @@ const fs = require("fs");
 //                                 // $inc:{  numOfBorrowed:2},
 //                             },
 //                             // $inc:{`borrowedBooks.$.${numOfBorrowed}` :1},
-//                         }, 
+//                         },
 //                     }
 //                 )
 //                     response.status(200).json({message:"you borrow book"})
@@ -42,33 +45,91 @@ const fs = require("fs");
 
 // }//borrow
 
+// List Of Borrowed Book
+exports.borrowBooksList = async (request, response, next) => {
+  const memberData = await memberSchema.findOne({ id: request.id });
+  if (!memberData) next(new Error("Member not found"));
 
-// List Of Borrowed Book 
-exports.borrowBooksList= async (request,response,next)=>{
-    const memberData=await memberSchema.findOne({id:request.id});
-    if(!memberData) next(new Error("Member not found"));
-
-    await bookOperation.find({id:request.id},{
-        bookId:1,_id:0
-    })
-  //request.query?.year
-  //request.query?.month
-//   bookSchema
-//     .aggregate([
-//       {
-//         $project: {
-//           _id: 0,
-//           title: 1,
-//           publishingDate: {
-//             $year: "$publishingDate",
-//           },
-//         },
-//       },
-//       { $match: { publishingDate: y } },
-//     ])
+  await bookOperation
+    .find(
+      { id: request.id },
+      {
+        bookId: 1,
+        _id: 0,
+      }
+    )
+    //request.query?.year
+    //request.query?.month
+    //   bookSchema
+    //     .aggregate([
+    //       {
+    //         $project: {
+    //           _id: 0,
+    //           title: 1,
+    //           publishingDate: {
+    //             $year: "$publishingDate",
+    //           },
+    //         },
+    //       },
+    //       { $match: { publishingDate: y } },
+    //     ])
     .then((data) => {
       response.status(200).json({ data });
     })
     .catch((error) => next(error));
+};
 
-}
+exports.searchBorrowedBook = (request, response, next) => {
+  bookOperation
+    .aggregate([
+      {
+        $project: {
+          employeeId: 1,
+          memberId: 1,
+          bookId: 1,
+          return: 1,
+          type: 1,
+          _id: 0,
+        },
+      },
+      {
+        $lookup: {
+          from: "employees",
+          localField: "employeeId",
+          foreignField: "_id",
+          as: "emp",
+        },
+      },
+      { $unwind: "$emp" },
+      {
+        $lookup: {
+          from: "members",
+          localField: "memberId",
+          foreignField: "_id",
+          as: "member",
+        },
+      },
+      { $unwind: "$member" },
+      {
+        $lookup: {
+          from: "books",
+          localField: "bookId",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      { $unwind: "$book" },
+      { $match: { return: false, type: "borrow" } },
+      {
+        $project: {
+          employeeName: "$emp.fname",
+          memberName: "$member.fullName",
+          bookName: "$book.title",
+        },
+      },
+    ])
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};

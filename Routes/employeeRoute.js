@@ -1,6 +1,6 @@
 const express = require("express");
 const controller = require("./../Controller/employeeController");
-const searchController = require("./../Controller/searchController");
+
 const {
   checkAdminOrBadmin,
   checkBadminOrAdminOrEmployee,
@@ -53,14 +53,6 @@ router
     validateMW,
     controller.deleteEmployee
   );
-
-// router.get("/employee")
-///////////////////////search/////////////////////////////////
-router.get("/searchName/:name", searchController.getMemberByName);
-router.get("/searchEmail/:email", searchController.getMemberByEmail);
-router.get("/bookAuther/:auther", searchController.bookAuther);
-router.get("/bookPuplisher/:puplisher", searchController.bookPuplisher);
-router.get("/bookTitle/:title", searchController.bookTitle);
 
 module.exports = router;
 

@@ -6,6 +6,8 @@ const genHashedPassword = require("../helpers/genHashedPassword");
 
 // Delete Image
 const fs = require("fs");
+const { request } = require("http");
+const { response } = require("express");
 
 const employeeSchema = mongoose.model("employees");
 
