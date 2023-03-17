@@ -22,18 +22,27 @@ router
 router
   .route("/book/mostBorrowed")
   .get(checkGeneralAuthentication, bookOperationController.mostBorrowedBook);
-// router
-//   .route("/book/mostReading")
-//   .get(checkGeneralAuthentication, bookOperationController.mostReadingBook);
+router
+  .route("/book/mostReading")
+  .get(checkGeneralAuthentication, bookOperationController.mostReadingBook);
 router
   .route("/book/reading")
-  .get(checkBadminOrAdminOrEmployeeOrMember, bookOperationController.getReadingBook);
+  .get(
+    checkBadminOrAdminOrEmployeeOrMember,
+    bookOperationController.getReadingBook
+  );
 router
   .route("/borrowedBooks/list")
-  .get(checkBadminOrAdminOrEmployeeOrMember, bookOperationController.borrowBooksList);
+  .get(
+    checkBadminOrAdminOrEmployeeOrMember,
+    bookOperationController.borrowBooksList
+  );
 router
   .route("/readingBooks/list")
-  .get(checkBadminOrAdminOrEmployeeOrMember, bookOperationController.readBooksList);
+  .get(
+    checkBadminOrAdminOrEmployeeOrMember,
+    bookOperationController.readBooksList
+  );
 router
   .route("/book/read")
   .post(checkBadminOrAdminOrEmployee, bookOperationController.readBook);
