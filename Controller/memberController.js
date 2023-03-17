@@ -1,4 +1,3 @@
-// const {request,response}=require('express');
 const mongoose = require("mongoose");
 require("./../Model/memberModel");
 const comparePassword = require("../helpers/comparePassword");
@@ -55,7 +54,7 @@ exports.addMember = (request, response, next) => {
 };
 
 exports.updateMember = async (request, response, next) => {
-  if (request.role != "badmin") {
+  if (request.role == "member" ) {
     delete request.body.email;
   }
   try {

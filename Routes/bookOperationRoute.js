@@ -1,67 +1,51 @@
 const express = require("express");
 const { validateBookOperation } = require("./../Core/bookValidationArray");
 const validateMW = require("./../Core/validations/validateMW");
-const controller = require("./../Controller/bookController");
 const bookOperationController = require("./../Controller/bookOperationController");
 const {
-  checkBadminOrAdminOrEmployeeBook,
-  checkBaseAdminOremployee,
-  checkGeneralAuthentication
+  checkBadminOrAdminOrEmployee,
+  checkBadminOrAdminOrEmployeeOrMember,
+  checkGeneralAuthentication,
 } = require("./../Core/auth/authenticationMW");
-// Upload Image
-const uploadImage = require("../helpers/uploadingImages");
-const upload = uploadImage("Books");
 const router = express.Router();
 
 router
   .route("/borrowedBooks")
   .get(
-    checkBadminOrAdminOrEmployeeBook,
+    checkBadminOrAdminOrEmployee,
     bookOperationController.getAllBookOperation
   );
 
 router
   .route("/book/borrowed")
-  .get(
-    checkGeneralAuthentication,
-    bookOperationController.getBorrowedBook
-  );
+  .get(checkBadminOrAdminOrEmployee, bookOperationController.getBorrowedBook);
 router
   .route("/book/mostBorrowed")
-  .get(
-    checkGeneralAuthentication,
-    bookOperationController.mostBorrowedBook
-  );
+  .get(checkGeneralAuthentication, bookOperationController.mostBorrowedBook);
+// router
+//   .route("/book/mostReading")
+//   .get(checkGeneralAuthentication, bookOperationController.mostReadingBook);
 router
   .route("/book/reading")
-  .get(
-    checkGeneralAuthentication,
-    bookOperationController.getReadingBook
-  );
+  .get(checkBadminOrAdminOrEmployeeOrMember, bookOperationController.getReadingBook);
 router
   .route("/borrowedBooks/list")
-  .get(
-    checkGeneralAuthentication,
-    bookOperationController.borrowBooksList
-  );
+  .get(checkBadminOrAdminOrEmployeeOrMember, bookOperationController.borrowBooksList);
 router
   .route("/readingBooks/list")
-  .get(
-    checkGeneralAuthentication,
-    bookOperationController.readBooksList
-  );
+  .get(checkBadminOrAdminOrEmployeeOrMember, bookOperationController.readBooksList);
 router
   .route("/book/read")
-  .post(checkBadminOrAdminOrEmployeeBook, bookOperationController.readBook);
+  .post(checkBadminOrAdminOrEmployee, bookOperationController.readBook);
 
 router
   .route("/book/return")
-  .post(checkBadminOrAdminOrEmployeeBook, bookOperationController.returnBook);
+  .post(checkBadminOrAdminOrEmployee, bookOperationController.returnBook);
 
 router
   .route("/book/borrow")
   .post(
-    checkBadminOrAdminOrEmployeeBook,
+    checkBadminOrAdminOrEmployee,
     validateBookOperation,
     validateMW,
     bookOperationController.borrowBooks
@@ -70,7 +54,7 @@ router
 router
   .route("/borrowedBooks/current")
   .get(
-    checkBadminOrAdminOrEmployeeBook,
+    checkBadminOrAdminOrEmployeeOrMember,
     bookOperationController.currentBorrowedBooks
   );
 

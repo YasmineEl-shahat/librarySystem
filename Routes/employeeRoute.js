@@ -4,6 +4,7 @@ const controller = require("./../Controller/employeeController");
 const {
   checkAdminOrBadmin,
   checkBadminOrAdminOrEmployee,
+  checkBadminOrAdminOrSpesificEmployee,
   checkAdmins,
 } = require("./../Core/auth/authenticationMW");
 const validateMW = require("./../Core/validations/validateMW");
@@ -28,14 +29,14 @@ router
   .route("/employee/:id")
   .get(
     intParam,
-    checkBadminOrAdminOrEmployee,
+    checkBadminOrAdminOrSpesificEmployee,
     validateMW,
     controller.getEmployee
   )
   .patch(
     upload.single("image"),
     intParam,
-    checkBadminOrAdminOrEmployee,
+    checkBadminOrAdminOrSpesificEmployee,
     validatePatchArray,
     validateMW,
     validatePatchArray,
