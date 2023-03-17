@@ -145,6 +145,9 @@ exports.borrowBooksList = async (request, response, next) => {
         $project: {
           _id: 0,
           bookTitle: "$book.title",
+          auther: "$book.auther",
+          publisher: "$book.publisher",
+          category: "$book.category",
         },
       },
     ])
@@ -327,6 +330,9 @@ exports.readBooksList = async (request, response, next) => {
         $project: {
           _id: 0,
           bookTitle: "$book.title",
+          auther: "$book.auther",
+          publisher: "$book.publisher",
+          category: "$book.category",
         },
       },
     ])

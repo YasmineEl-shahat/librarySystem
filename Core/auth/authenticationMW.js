@@ -104,3 +104,14 @@ module.exports.checkBadminOrAdminOrEmployeeBook = (request, response, next) => {
     next();
   else NotAuthorized(next);
 };
+
+module.exports.checkGeneralAuthentication = (request, response, next) => {
+  if (
+    request.role == "badmin" ||
+    request.role == "admin" ||
+    request.role == "employee" ||
+    request.role == "member"
+  )
+    next();
+  else NotAuthorized(next);
+};
