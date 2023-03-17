@@ -387,6 +387,52 @@ exports.mostBorrowedBook = (request, response, next) => {
     .catch((error) => next(error));
 };
 
+// Get mostReadingBook within specific Year
+exports.mostReadingBook = (request, response, next) => {
+  const today = new Date();
+  let yearValue = request.query?.year
+    ? Number(request.query.year)
+    : today.getFullYear();
+  bookOperation
+    .aggregate([
+      {
+        $project: {
+          _id: 0,
+          bookId: 1,
+          type: 1,
+          year: {
+            $year: "$createdAt",
+          },
+        },
+      },
+      { $match: { year: yearValue, type: "read" } },
+      {
+        $lookup: {
+          from: "books",
+          localField: "bookId",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      {
+        $unwind: "$book",
+      },
+
+      {
+        $project: {
+          title: "$book.title",
+          reading: "$book.noOfReading",
+        },
+      },
+      { $sort: { reading: -1 } },
+      { $limit: 1 },
+    ])
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};
+
 //current borrowed books
 exports.currentBorrowedBooks = async (request, response, next) => {
   const memberData = await memberSchema.findOne({ _id: request.query.id });
