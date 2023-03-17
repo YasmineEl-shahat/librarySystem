@@ -54,7 +54,7 @@ exports.addMember = (request, response, next) => {
 };
 
 exports.updateMember = async (request, response, next) => {
-  if (request.role == "member" ) {
+  if (request.role == "member") {
     delete request.body.email;
   }
   try {
@@ -136,24 +136,43 @@ exports.deleteMember = async (request, response, next) => {
   }
 };
 
+exports.autoComplete = (req, res, next) => {
+  const data = "^" + req.params.data.trim();
+  MemberSchema.find(
+    {
+      $or: [
+        { email: { $regex: data, $options: "ix" } },
+        { fullName: { $regex: data, $options: "i" } },
+      ],
+    },
+    { fullName: 1, email: 1, _id: 0 }
+  )
+    .then((data) => {
+      res.status(200).json({ data });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 //END of Basic Functions
 
 //////////////nabila///////////////
-exports.memberSearch=(request,response,error)=>{
+exports.memberSearch = (request, response, error) => {
   // console.log(request.query)
-  let searchQuery ={...request.query};
-  let searchProperty=["fullName","email"];
-  searchProperty.forEach(el=>{
-      if(searchQuery[el]){}
-      else{
-          delete searchQuery[el];
-      }
-  })
+  let searchQuery = { ...request.query };
+  let searchProperty = ["fullName", "email"];
+  searchProperty.forEach((el) => {
+    if (searchQuery[el]) {
+    } else {
+      delete searchQuery[el];
+    }
+  });
   console.log(searchQuery);
-  MemberSchema.find(searchQuery).limit(5)
-  .then(data=>{
-      response.status(200).json({data})
-  })
-  .catch(error=>next(error))
-}
-
+  MemberSchema.find(searchQuery)
+    .limit(5)
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};

@@ -36,7 +36,12 @@ router
   .route("/members/:id")
   .get(checkBadminOrAdminOrEmployeeOrMember, validateMW, controller.getMember)
   .delete(checkBadminOrAdminOrEmployee, validateMW, controller.deleteMember);
+router
+  .route("/memberSearch/:data")
+  .get(checkBadminOrAdminOrEmployee, controller.autoComplete);
 
-  /////////nabila//////////
-  router.route("/searchMember/:fullName?/:email?").get(checkAdmins,controller.memberSearch);
+/////////nabila//////////
+router
+  .route("/searchMember/:fullName?/:email?")
+  .get(checkAdmins, controller.memberSearch);
 module.exports = router;
