@@ -7,6 +7,7 @@ const validateMW = require("./../Core/validations/validateMW");
 const controller = require("./../Controller/bookController");
 const {
   checkBadminOrAdminOrEmployeeBook,
+  checkGeneralAuthentication
 } = require("./../Core/auth/authenticationMW");
 // Upload Image
 const uploadImage = require("../helpers/uploadingImages");
@@ -37,16 +38,11 @@ router
 
 router
   .route("/newBooks")
-  .get(checkBadminOrAdminOrEmployeeBook, controller.getNewBooks);
+  .get(checkGeneralAuthentication, controller.getNewBooks);
 // router.route("/booksYearGroup").get(checkBadminOrAdminOrEmployeeBook,controller.groupBooksByYear)
 router
   .route("/booksYear")
-  .get(checkBadminOrAdminOrEmployeeBook, controller.getBooksYear);
-
-router
-  .route("/getNewBooks")
-  .get(checkBadminOrAdminOrEmployeeBook, controller.getNewBooks);
-router.route("/getBooksYear/:year").get(controller.getBooksYear);
+  .get(checkGeneralAuthentication, controller.getBooksYear);
 
 router
   .route("/searchBook/:title?/:publisher?/:auther?")

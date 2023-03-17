@@ -6,6 +6,7 @@ const bookOperationController = require("./../Controller/bookOperationController
 const {
   checkBadminOrAdminOrEmployeeBook,
   checkBaseAdminOremployee,
+  checkGeneralAuthentication
 } = require("./../Core/auth/authenticationMW");
 // Upload Image
 const uploadImage = require("../helpers/uploadingImages");
@@ -22,30 +23,33 @@ router
 router
   .route("/book/borrowed")
   .get(
-    checkBadminOrAdminOrEmployeeBook,
+    checkGeneralAuthentication,
     bookOperationController.getBorrowedBook
   );
 router
   .route("/book/mostBorrowed")
   .get(
-    checkBadminOrAdminOrEmployeeBook,
+    checkGeneralAuthentication,
     bookOperationController.mostBorrowedBook
   );
 router
   .route("/book/reading")
   .get(
-    checkBadminOrAdminOrEmployeeBook,
+    checkGeneralAuthentication,
     bookOperationController.getReadingBook
   );
 router
   .route("/borrowedBooks/list")
   .get(
-    checkBadminOrAdminOrEmployeeBook,
+    checkGeneralAuthentication,
     bookOperationController.borrowBooksList
   );
 router
   .route("/readingBooks/list")
-  .get(checkBadminOrAdminOrEmployeeBook, bookOperationController.readBooksList);
+  .get(
+    checkGeneralAuthentication,
+    bookOperationController.readBooksList
+  );
 router
   .route("/book/read")
   .post(checkBadminOrAdminOrEmployeeBook, bookOperationController.readBook);
