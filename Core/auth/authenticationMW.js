@@ -110,7 +110,9 @@ module.exports.checkGeneralAuthentication = (request, response, next) => {
     request.role == "badmin" ||
     request.role == "admin" ||
     request.role == "employee" ||
-    request.role == "member"
+    (request.role == "member" && request.id == request.query.id) ||
+    (request.role == "member" && request.id == request.params.id) ||
+    (request.role == "member" && request.id == request.body.id)
   )
     next();
   else NotAuthorized(next);
