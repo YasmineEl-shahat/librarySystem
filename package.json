@@ -17,11 +17,13 @@
     "express-validator": "^6.15.0",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.0",
+    "mailgen": "^2.0.27",
     "moment": "^2.29.4",
     "mongo-sanitize": "^1.1.0",
     "mongoose": "^6.9.2",
     "mongoose-sequence": "^5.3.1",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.1",
     "path": "^0.12.7"
   },
   "devDependencies": {

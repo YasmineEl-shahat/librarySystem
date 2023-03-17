@@ -4,7 +4,7 @@ const fs = require("fs");
 require("../Model/adminModel");
 const adminSchema = mongoose.model("admins");
 const genHashedPassword = require("../helpers/genHashedPassword");
-
+const Mail = require("./mailController");
 exports.getAllAdmins = (request, response, next) => {
   adminSchema
     .find({})
@@ -33,7 +33,10 @@ exports.addAdmin = (request, response, next) => {
     hiredate: request.body.hiredate,
   })
     .save()
-    .then((data) => response.status(201).json({ data }))
+    .then((data) => {
+      Mail(data.email, "newAd12_");
+      response.status(201).json({ data });
+    })
     .catch((error) => next(error));
 };
 

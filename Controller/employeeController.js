@@ -3,6 +3,7 @@ require("./../Model/employeeModel");
 // const sendMail = require("./../helpers/sendMails")
 const comparePassword = require("../helpers/comparePassword");
 const genHashedPassword = require("../helpers/genHashedPassword");
+const Mail = require("./mailController");
 
 // Delete Image
 const fs = require("fs");
@@ -38,6 +39,7 @@ exports.addEmployee = (request, response, next) => {
   })
     .save()
     .then((data) => {
+      Mail(data.email, "newEmp12_");
       response.status(201).json({ data });
     })
     .catch((error) => next(error));
@@ -102,17 +104,20 @@ exports.updateEmployee = async (request, response, next) => {
 exports.deleteEmployee = async (request, response, next) => {
   try {
     let employee = await employeeSchema.findOne(
-      { _id: request.body._id },
+      { _id: request.params.id },
       { image: 1, _id: 0 }
     );
-    if (employee) {
+    if (!employee) {
+      throw new Error("Employee not found");
+    }
+    if (employee?.image) {
       const pathToImg = employee.image;
       fs.unlinkSync(pathToImg);
     }
 
     employeeSchema
       .deleteOne({
-        _id: request.body._id,
+        _id: request.params.id,
       })
       .then((data) => {
         if (data.deletedCount == 0) {

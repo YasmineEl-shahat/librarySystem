@@ -1,5 +1,6 @@
 const express = require("express");
 const controller = require("./../Controller/employeeController");
+const mailController=require("./../Controller/mailController")
 
 const {
   checkAdminOrBadmin,
@@ -27,6 +28,7 @@ router
     validatePostArray,
     validateMW,
     controller.addEmployee
+    // ,mailController.sendMail
   );
 
 router
@@ -35,7 +37,7 @@ router
     intParam,
     checkBadminOrAdminOrEmployee,
     validateMW,
-    controller.getEmployee
+    controller.getEmployee,
   )
   .patch(
     upload.single("image"),
@@ -48,9 +50,8 @@ router
     controller.updateEmployee
   )
   .delete(
+    intParam,
     checkAdmins,
-    validateDelArray,
-    validateMW,
     controller.deleteEmployee
   );
 
