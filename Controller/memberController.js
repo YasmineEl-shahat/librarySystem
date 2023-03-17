@@ -1,4 +1,3 @@
-// const {request,response}=require('express');
 const mongoose = require("mongoose");
 require("./../Model/memberModel");
 const comparePassword = require("../helpers/comparePassword");
@@ -57,7 +56,7 @@ exports.addMember = (request, response, next) => {
 };
 
 exports.updateMember = async (request, response, next) => {
-  if (request.role != "badmin") {
+  if (request.role == "member") {
     delete request.body.email;
   }
   try {
@@ -116,16 +115,15 @@ exports.updateMember = async (request, response, next) => {
 };
 exports.deleteMember = async (request, response, next) => {
   try {
-    let imagePath = await MemberSchema.findOne(
+    let member = await MemberSchema.findOne(
       { _id: request.params.id },
       { image: 1, _id: 0 }
     );
-    if (!imagePath) next(new Error("Member not found"));
+    if (!member) next(new Error("Member not found"));
     else {
-      if (imagePath) {
-        const pathToImg = imagePath.image;
+      if (member?.image) {
+        const pathToImg = member.image;
         fs.unlinkSync(pathToImg);
-      } else {
       }
       MemberSchema.deleteOne({
         _id: request.params.id,
@@ -138,6 +136,25 @@ exports.deleteMember = async (request, response, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+exports.autoComplete = (req, res, next) => {
+  const data = "^" + req.params.data.trim();
+  MemberSchema.find(
+    {
+      $or: [
+        { email: { $regex: data, $options: "ix" } },
+        { fullName: { $regex: data, $options: "i" } },
+      ],
+    },
+    { fullName: 1, email: 1, _id: 0 }
+  )
+    .then((data) => {
+      res.status(200).json({ data });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 //END of Basic Functions

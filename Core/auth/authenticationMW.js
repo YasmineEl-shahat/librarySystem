@@ -68,7 +68,7 @@ module.exports.employeeOrAdmin = (request, response, next) => {
   } else NotAuthorized(next);
 };
 
-module.exports.checkBadminOrAdminOrEmployee = (request, response, next) => {
+module.exports.checkBadminOrAdminOrSpesificEmployee = (request, response, next) => {
   if (
     request.role == "badmin" ||
     request.role == "admin" ||
@@ -84,22 +84,35 @@ module.exports.checkBaseAdminOremployee = (request, response, next) => {
   } else NotAuthorized(next);
 };
 
-module.exports.checkBadminOrEmployeeOrMember = (request, response, next) => {
+module.exports.checkBadminOrAdminOrEmployee = (request, response, next) => {
   if (
     request.role == "badmin" ||
-    request.role == "employee" ||
-    (request.role == "member" && request.id == request.params.id) ||
-    (request.role == "member" && request.id == request.body.id)
+    request.role == "admin" ||
+    request.role == "employee"
   )
     next();
   else NotAuthorized(next);
 };
 
-module.exports.checkBadminOrAdminOrEmployeeBook = (request, response, next) => {
+module.exports.checkGeneralAuthentication = (request, response, next) => {
   if (
     request.role == "badmin" ||
     request.role == "admin" ||
-    request.role == "employee"
+    request.role == "employee" ||
+    request.role == "member"
+  )
+    next();
+  else NotAuthorized(next);
+};
+
+module.exports.checkBadminOrAdminOrEmployeeOrMember = (request, response, next) => {
+  if (
+    request.role == "badmin" ||
+    request.role == "admin" ||
+    request.role == "employee" ||
+    (request.role == "member" && request.id == request.query.id) ||
+    (request.role == "member" && request.id == request.params.id) ||
+    (request.role == "member" && request.id == request.body.id)
   )
     next();
   else NotAuthorized(next);

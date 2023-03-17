@@ -5,6 +5,7 @@ const mailController=require("./../Controller/mailController")
 const {
   checkAdminOrBadmin,
   checkBadminOrAdminOrEmployee,
+  checkBadminOrAdminOrSpesificEmployee,
   checkAdmins,
 } = require("./../Core/auth/authenticationMW");
 const validateMW = require("./../Core/validations/validateMW");
@@ -23,26 +24,20 @@ const router = express.Router();
 router
   .route("/employee")
   .get(checkAdmins, controller.getAllEmployee)
-  .post(
-    checkAdmins,
-    validatePostArray,
-    validateMW,
-    controller.addEmployee
-    // ,mailController.sendMail
-  );
+  .post(checkAdmins, validatePostArray, validateMW, controller.addEmployee);
 
 router
   .route("/employee/:id")
   .get(
     intParam,
-    checkBadminOrAdminOrEmployee,
+    checkBadminOrAdminOrSpesificEmployee,
     validateMW,
     controller.getEmployee,
   )
   .patch(
     upload.single("image"),
     intParam,
-    checkBadminOrAdminOrEmployee,
+    checkBadminOrAdminOrSpesificEmployee,
     validatePatchArray,
     validateMW,
     validatePatchArray,
@@ -55,6 +50,7 @@ router
     controller.deleteEmployee
   );
 
+router.route("/search/:data?").get(checkAdmins, controller.autoComplete);
 module.exports = router;
 
 // mongodb://127.0.0.1:27017/libraryDB

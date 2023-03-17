@@ -6,7 +6,8 @@ const {
 const validateMW = require("./../Core/validations/validateMW");
 const controller = require("./../Controller/bookController");
 const {
-  checkBadminOrAdminOrEmployeeBook,
+  checkBadminOrAdminOrEmployee,
+  checkGeneralAuthentication,
 } = require("./../Core/auth/authenticationMW");
 // Upload Image
 const uploadImage = require("../helpers/uploadingImages");
@@ -15,17 +16,17 @@ const upload = uploadImage("Books");
 const router = express.Router();
 router
   .route("/books")
-  .get(checkBadminOrAdminOrEmployeeBook, controller.getAllBooks)
+  .get(checkGeneralAuthentication, controller.getAllBooks)
   .post(
     upload.single("image"),
-    checkBadminOrAdminOrEmployeeBook,
+    checkBadminOrAdminOrEmployee,
     validatePostArray,
     validateMW,
     controller.addBook
   )
   .patch(
     upload.single("image"),
-    checkBadminOrAdminOrEmployeeBook,
+    checkBadminOrAdminOrEmployee,
     validatePatchArray,
     validateMW,
     controller.updateBook
@@ -33,28 +34,26 @@ router
 
 router
   .route("/books/:id")
-  .delete(checkBadminOrAdminOrEmployeeBook, validateMW, controller.deleteBook);
+  .delete(checkBadminOrAdminOrEmployee, validateMW, controller.deleteBook);
 
 router
   .route("/newBooks")
-  .get(checkBadminOrAdminOrEmployeeBook, controller.getNewBooks);
-// router.route("/booksYearGroup").get(checkBadminOrAdminOrEmployeeBook,controller.groupBooksByYear)
-router
-  .route("/booksYear")
-  .get(checkBadminOrAdminOrEmployeeBook, controller.getBooksYear);
+  .get(checkGeneralAuthentication, controller.getNewBooks);
 
 router
-  .route("/getNewBooks")
-  .get(checkBadminOrAdminOrEmployeeBook, controller.getNewBooks);
-router.route("/getBooksYear/:year").get(controller.getBooksYear);
+  .route("/booksYear")
+  .get(checkGeneralAuthentication, controller.getBooksYear);
 
 router
   .route("/searchBook/:title?/:publisher?/:auther?")
-  .get(controller.bookSearch);
-router.route("/AvailableBooks").get(controller.availableBook);
+  .get(checkBadminOrAdminOrEmployee, controller.bookSearch);
+
 router
-  .route(
-    "/bookSearchFilter/:publishingDate?/:category?/:publisher?/:auther?/:avilable?"
-  )
-  .get(controller.bookSearchFilter);
+  .route("/AvailableBooks")
+  .get(checkGeneralAuthentication, controller.availableBook);
+
+router
+  .route("/bookSearchFilter")
+  .get(checkGeneralAuthentication, controller.bookSearchFilter);
+
 module.exports = router;
