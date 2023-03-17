@@ -27,7 +27,7 @@ exports.report = (request, response, next) => {
         path.join(
           __dirname,
           "..",
-          "Reports/" + "report.json" + "-" + Date.now()
+          "Reports/" + "report" + "-" + Date.now() + ".json"
         ),
         { report: format },
         (error) => next(error)
