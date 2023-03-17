@@ -1,8 +1,8 @@
 const express = require("express");
 const {
-  checkBadminOrEmployeeOrMember,
-  checkBaseAdminOremployee,
-  checkBadminOrAdminOrEmployeeBook,
+  checkAdmins,
+  checkBadminOrAdminOrEmployee,
+  checkBadminOrAdminOrEmployeeOrMember,
 } = require("./../Core/auth/authenticationMW");
 const {
   validatePostArray,
@@ -17,16 +17,16 @@ const upload = uploadImage("Members");
 const router = express.Router();
 router
   .route("/members")
-  .get(checkBadminOrAdminOrEmployeeBook, controller.getAllMembers)
+  .get(checkBadminOrAdminOrEmployee, controller.getAllMembers)
   .post(
-    checkBaseAdminOremployee,
+    checkBadminOrAdminOrEmployee,
     validatePostArray,
     validateMW,
     controller.addMember
   )
   .patch(
     upload.single("image"),
-    checkBadminOrEmployeeOrMember,
+    checkBadminOrAdminOrEmployeeOrMember,
     validatePatchArray,
     validateMW,
     controller.updateMember
@@ -34,9 +34,9 @@ router
 
 router
   .route("/members/:id")
-  .get(checkBadminOrEmployeeOrMember, validateMW, controller.getMember)
-  .delete(checkBaseAdminOremployee, validateMW, controller.deleteMember);
+  .get(checkBadminOrAdminOrEmployeeOrMember, validateMW, controller.getMember)
+  .delete(checkBadminOrAdminOrEmployee, validateMW, controller.deleteMember);
 
   /////////nabila//////////
-  router.route("/searchMember/:fullName?/:email?").get(controller.memberSearch);
+  router.route("/searchMember/:fullName?/:email?").get(checkAdmins,controller.memberSearch);
 module.exports = router;
