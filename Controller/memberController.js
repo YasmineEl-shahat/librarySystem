@@ -113,16 +113,15 @@ exports.updateMember = async (request, response, next) => {
 };
 exports.deleteMember = async (request, response, next) => {
   try {
-    let imagePath = await MemberSchema.findOne(
+    let member = await MemberSchema.findOne(
       { _id: request.params.id },
       { image: 1, _id: 0 }
     );
-    if (!imagePath) next(new Error("Member not found"));
+    if (!member) next(new Error("Member not found"));
     else {
-      if (imagePath) {
-        const pathToImg = imagePath.image;
+      if (member?.image) {
+        const pathToImg = member.image;
         fs.unlinkSync(pathToImg);
-      } else {
       }
       MemberSchema.deleteOne({
         _id: request.params.id,
