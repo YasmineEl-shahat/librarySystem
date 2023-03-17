@@ -100,10 +100,10 @@ exports.borrowBooksList = async (request, response, next) => {
   if (!memberData) next(new Error("Member not found"));
   const today = new Date();
   let yearValue = request.query?.year
-    ? request.query.year
+    ? Number(request.query.year)
     : today.getFullYear();
   let monthValue = request.query?.month
-    ? request.query.month
+    ? Number(request.query.month)
     : today.getMonth() + 1;
 
   bookOperation
@@ -282,10 +282,10 @@ exports.readBooksList = async (request, response, next) => {
   if (!memberData) next(new Error("Member not found"));
   const today = new Date();
   let yearValue = request.query?.year
-    ? request.query.year
+    ? Number(request.query.year)
     : today.getFullYear();
   let monthValue = request.query?.month
-    ? request.query.month
+    ? Number(request.query.month)
     : today.getMonth() + 1;
 
   bookOperation
