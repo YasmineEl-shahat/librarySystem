@@ -335,37 +335,25 @@ exports.readBooksList = async (request, response, next) => {
     })
     .catch((error) => next(error));
 };
-exports.searchBorrowedBook = (request, response, next) => {
+// Get mostBorrowedBook within specific Year
+exports.mostBorrowedBook = (request, response, next) => {
+  const today = new Date();
+  let yearValue = request.query?.year
+    ? Number(request.query.year)
+    : today.getFullYear();
   bookOperation
     .aggregate([
       {
         $project: {
-          employeeId: 1,
-          memberId: 1,
-          bookId: 1,
-          return: 1,
-          type: 1,
           _id: 0,
+          bookId: 1,
+          type: 1,
+          year: {
+            $year: "$createdAt",
+          },
         },
       },
-      {
-        $lookup: {
-          from: "employees",
-          localField: "employeeId",
-          foreignField: "_id",
-          as: "emp",
-        },
-      },
-      { $unwind: "$emp" },
-      {
-        $lookup: {
-          from: "members",
-          localField: "memberId",
-          foreignField: "_id",
-          as: "member",
-        },
-      },
-      { $unwind: "$member" },
+      { $match: { year: yearValue, type: "borrow" } },
       {
         $lookup: {
           from: "books",
@@ -374,13 +362,83 @@ exports.searchBorrowedBook = (request, response, next) => {
           as: "book",
         },
       },
-      { $unwind: "$book" },
-      { $match: { return: false, type: "borrow" } },
+      {
+        $unwind: "$book",
+      },
+
       {
         $project: {
-          employeeName: "$emp.fname",
-          memberName: "$member.fullName",
-          bookName: "$book.title",
+          title: "$book.title",
+          borrowing: "$book.noOfBorrowing",
+        },
+      },
+      { $sort: { borrowing: -1 } },
+      { $limit: 1 },
+    ])
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};
+
+//current borrowed books
+exports.currentBorrowedBooks = async (request, response, next) => {
+  const memberData = await memberSchema.findOne({ _id: request.query.id });
+  if (!memberData) next(new Error("Member not found"));
+  const today = new Date();
+  bookOperation
+    .aggregate([
+      {
+        $project: {
+          _id: 0,
+          bookId: 1,
+          memberId: 1,
+          type: 1,
+          exceed: { $gt: [today, "deadlineDate"] },
+          returnDate: 1,
+          return: 1,
+        },
+      },
+
+      {
+        $match: {
+          memberId: Number(request.query.id),
+          type: "borrow",
+        },
+      },
+      {
+        $group: {
+          _id: "$bookId",
+          count: { $count: {} },
+          books: { $push: "$$ROOT" },
+        },
+      },
+      {
+        $match: {
+          "books.return": false,
+        },
+      },
+
+      {
+        $lookup: {
+          from: "books",
+          localField: "_id",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      {
+        $unwind: "$book",
+      },
+      {
+        $project: {
+          _id: 0,
+          bookTitle: "$book.title",
+          auther: "$book.auther",
+          publisher: "$book.publisher",
+          category: "$book.category",
+          exceed: { $gt: [today, "deadlineDate"] },
+          count: "$count",
         },
       },
     ])

@@ -25,6 +25,12 @@ router
     checkBadminOrAdminOrEmployeeBook,
     bookOperationController.getBorrowedBook
   );
+  router
+  .route("/book/mostBorrowed")
+  .get(
+    checkBadminOrAdminOrEmployeeBook,
+    bookOperationController.mostBorrowedBook
+  );
 router
   .route("/book/reading")
   .get(
@@ -37,11 +43,6 @@ router
     checkBadminOrAdminOrEmployeeBook,
     bookOperationController.borrowBooksList
   );
-
-router
-  .route("/searchBorrowedBook")
-  .get(bookOperationController.searchBorrowedBook);
-
   router
   .route("/readingBooks/list")
   .get(
@@ -56,6 +57,7 @@ router
   .route("/book/return")
   .post(checkBadminOrAdminOrEmployeeBook, bookOperationController.returnBook);
 
+
 router
   .route("/book/borrow")
   .post(
@@ -64,4 +66,13 @@ router
     validateMW,
     bookOperationController.borrowBooks
   );
+  
+router
+.route("/borrowedBooks/current")
+.get(
+  bookOperationController.currentBorrowedBooks
+);
+
 module.exports = router;
+
+
