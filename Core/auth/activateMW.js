@@ -6,6 +6,7 @@ const comparePassword = require("./../../helpers/comparePassword");
 const adminSchema = mongoose.model("admins");
 const employeeSchema = mongoose.model("employees");
 const membersSchema = mongoose.model("members");
+const { DEFAULTPASS } = require("../../config/env");
 
 module.exports = async (request, response, next) => {
   // check activate admin or badmin
@@ -14,7 +15,7 @@ module.exports = async (request, response, next) => {
       { _id: request.id },
       { password: 1 }
     );
-    if (await comparePassword("newAd12_", admin.password))
+    if (await comparePassword(DEFAULTPASS, admin.password))
       next(new Error("not activated"));
     else next();
 
@@ -24,7 +25,7 @@ module.exports = async (request, response, next) => {
       { _id: request.id },
       { password: 1 }
     );
-    if (await comparePassword("newEmp12_", employee.password))
+    if (await comparePassword(DEFAULTPASS, employee.password))
       next(new Error("not activated"));
     else next();
     // check activate memeber
@@ -33,7 +34,7 @@ module.exports = async (request, response, next) => {
       { _id: request.id },
       { password: 1 }
     );
-    if (await comparePassword("newMe12_", member.password))
+    if (await comparePassword(DEFAULTPASS, member.password))
       next(new Error("not activated"));
     else next();
   }

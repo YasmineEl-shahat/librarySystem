@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 const genHashedPassword = require("../helpers/genHashedPassword");
+const { DEFAULTPASS } = require("../config/env");
 const schema = new mongoose.Schema({
   _id: Number,
   fname: { type: String, required: true },
@@ -14,7 +15,7 @@ const schema = new mongoose.Schema({
   isBase: { type: Boolean },
   password: {
     type: String,
-    default: genHashedPassword("newAd12_"),
+    default: genHashedPassword(DEFAULTPASS),
   },
   salary: { type: Number, required: true },
   birthdate: { type: Date, required: true },
