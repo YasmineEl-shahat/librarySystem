@@ -22,11 +22,7 @@ router
   .route("/admins")
   .all(checkBaseAdmin)
   .get(controller.getAllAdmins)
-  .post(
-    validatePostArray,
-    validateMW,
-    controller.addAdmin
-  );
+  .post(validatePostArray, validateMW, controller.addAdmin);
 router
   .route("/admin/:id")
   .all(checkAdminOrBadmin)
@@ -40,6 +36,6 @@ router
   )
   .delete(intParam, validateMW, controller.deleteAdmin);
 
-  // router.post("/testmail",mail.sendEmail)
+// router.post("/testmail",mail.sendEmail)
 
 module.exports = router;
