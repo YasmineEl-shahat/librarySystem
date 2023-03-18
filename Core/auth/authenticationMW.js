@@ -1,7 +1,6 @@
 const { request, response } = require("express");
 const jwt = require("jsonwebtoken");
-
-let sk = process.env.SECRET_KEY || "SK";
+const { SECRET_KEY } = require("../../config/env");
 
 function NotAuthorized(next) {
   let error = new Error("Not Authorized");
@@ -11,7 +10,7 @@ function NotAuthorized(next) {
 module.exports = (request, response, next) => {
   try {
     let token = request.get("authorization").split(" ")[1];
-    let decoded_token = jwt.verify(token, sk);
+    let decoded_token = jwt.verify(token, SECRET_KEY);
     request.id = decoded_token.id;
     request.role = decoded_token.role;
     next();
@@ -68,7 +67,11 @@ module.exports.employeeOrAdmin = (request, response, next) => {
   } else NotAuthorized(next);
 };
 
-module.exports.checkBadminOrAdminOrSpesificEmployee = (request, response, next) => {
+module.exports.checkBadminOrAdminOrSpesificEmployee = (
+  request,
+  response,
+  next
+) => {
   if (
     request.role == "badmin" ||
     request.role == "admin" ||
@@ -117,7 +120,11 @@ module.exports.checkBadminOrEmployeeOrMember = (request, response, next) => {
   else NotAuthorized(next);
 };
 
-module.exports.checkBadminOrAdminOrEmployeeOrMember = (request, response, next) => {
+module.exports.checkBadminOrAdminOrEmployeeOrMember = (
+  request,
+  response,
+  next
+) => {
   if (
     request.role == "badmin" ||
     request.role == "admin" ||

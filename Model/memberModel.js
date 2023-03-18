@@ -3,7 +3,7 @@ const AutoIncrement = require("mongoose-sequence")(mongoose);
 require("./bookModel");
 const genHashedPassword = require("../helpers/genHashedPassword");
 const books = mongoose.model("books");
-
+const { DEFAULTPASS } = require("../config/env");
 const memberSchema = new mongoose.Schema(
   {
     _id: Number,
@@ -16,7 +16,7 @@ const memberSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      default: genHashedPassword("newMe12_"),
+      default: genHashedPassword(DEFAULTPASS),
     },
     phoneNumber: {
       type: String,

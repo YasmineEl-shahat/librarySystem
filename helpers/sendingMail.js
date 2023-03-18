@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 const mailgen = require("mailgen");
-const { EMAIL, PASSWORD } = require("../env");
+const { EMAIL, PASSWORD } = require("../config/env");
 const { response, request } = require("express");
 module.exports = (recieverMail, password) => {
   let config = {

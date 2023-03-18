@@ -7,6 +7,7 @@ const MemberSchema = mongoose.model("members");
 const genHashedPassword = require("../helpers/genHashedPassword");
 const fs = require("fs");
 const Mail = require("../helpers/sendingMail");
+const { DEFAULTPASS } = require("../config/env");
 // const uploadImage = require("../helpers/deletingImages");
 
 exports.getAllMembers = (request, response, next) => {
@@ -49,7 +50,7 @@ exports.addMember = (request, response, next) => {
   })
     .save()
     .then((data) => {
-      Mail(data.email, "newMe12_");
+      Mail(data.email, DEFAULTPASS);
       response.status(201).json({ data });
     })
     .catch((error) => next(error));
@@ -70,7 +71,7 @@ exports.updateMember = async (request, response, next) => {
     //  first time login admin update to image
     if (
       (memberOldData.image == undefined && request.file) ||
-      (await comparePassword("newMe12_", memberOldData.password))
+      (await comparePassword(DEFAULTPASS, memberOldData.password))
     ) {
       throw new Error(
         "You Can Not Update Image OR Password Before Member First Login"
