@@ -8,7 +8,7 @@ exports.validatePostArray = [
     .withMessage("member fullname should contain at least 6 chars"),
   body("email").isEmail().withMessage("invalid mail"),
   body("password")
-  .optional()
+    .optional()
     .isStrongPassword()
     .withMessage(
       "password should contains at least 8 characters, one uppercase letter, one lowercase letter,one special char, and one number"
@@ -26,7 +26,6 @@ exports.validatePostArray = [
   body("building")
     .isInt()
     .withMessage("member Address Building must be an Integer"),
-
 ];
 
 exports.validatePatchArray = [

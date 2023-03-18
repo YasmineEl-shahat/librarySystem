@@ -1,8 +1,9 @@
 const express = require("express");
 const {
   checkAdmins,
+  checkBaseAdminOremployee,
   checkBadminOrAdminOrEmployee,
-  checkBadminOrAdminOrEmployeeOrMember,
+  checkBadminOrEmployeeOrMember,
 } = require("./../Core/auth/authenticationMW");
 const {
   validatePostArray,
@@ -10,6 +11,7 @@ const {
 } = require("./../Core/memberValidationArray");
 const validateMW = require("./../Core/validations/validateMW");
 const controller = require("./../Controller/memberController");
+const intParam = require("../Core/paramValidation").intParam;
 // Upload Image
 const uploadImage = require("../helpers/uploadingImages");
 const upload = uploadImage("Members");
@@ -19,26 +21,26 @@ router
   .route("/members")
   .get(checkBadminOrAdminOrEmployee, controller.getAllMembers)
   .post(
-    checkBadminOrAdminOrEmployee,
+    checkBadminOrEmployeeOrMember,
     validatePostArray,
     validateMW,
     controller.addMember
-  )
-  .patch(
-    upload.single("image"),
-    checkBadminOrAdminOrEmployeeOrMember,
-    validatePatchArray,
-    validateMW,
-    controller.updateMember
   );
 
 router
   .route("/members/:id")
-  .get(checkBadminOrAdminOrEmployeeOrMember, validateMW, controller.getMember)
-  .delete(checkBadminOrAdminOrEmployee, validateMW, controller.deleteMember);
+  .get(checkBadminOrAdminOrEmployeeOrMember, intParam, controller.getMember)
+  .patch(
+    upload.single("image"),
+    checkBadminOrEmployeeOrMember,
+    validatePatchArray,
+    validateMW,
+    controller.updateMember
+  )
+  .delete(checkBadminOrAdminOrEmployee, intParam, controller.deleteMember);
 router
   .route("/memberSearch/:data")
-  .get(checkBadminOrAdminOrEmployee, controller.autoComplete);
+  .get(checkBaseAdminOremployee, controller.autoComplete);
 
 /////////nabila//////////
 router
