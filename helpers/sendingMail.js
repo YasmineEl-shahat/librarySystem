@@ -34,8 +34,8 @@ module.exports = (recieverMail, password) => {
     to: recieverMail,
     subject: "welcome to the library",
     text: "successfuly register in our library ",
-    html: `<h1>please activate your account </h1>
-        -add image and this is your default <ul><li>password :${password}</li></ul>`,
+    html: `<h1>Please activate your account </h1>
+        <ul><li>Add image</li><li>Update this password :${password}</li></ul>`,
   };
   transporter.sendMail(message, function (error, info) {
     if (error) {
