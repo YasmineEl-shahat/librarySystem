@@ -15,7 +15,7 @@ exports.report = (request, response, next) => {
         return {
           id: report.id,
           bookTitle: report.bookId.title,
-          member: report.memberId.fullName,
+          member: report.memberId?.fullName,
           employee: report.employeeId.fname + " " + report.employeeId.lname,
           type: report.type,
           deadLineDate: report.deadLineDate,

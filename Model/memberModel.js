@@ -32,20 +32,6 @@ const memberSchema = new mongoose.Schema(
     },
     image: { type: String },
     blockedDate: { type: Date },
-    readingBooks: {
-      type: Array,
-      items: {
-        type: Number,
-        ref: books,
-      },
-    },
-    borrowedBooks: {
-      type: Array,
-      items: {
-        type: Number,
-        ref: books,
-      },
-    },
   },
 
   {

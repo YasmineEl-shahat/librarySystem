@@ -8,7 +8,6 @@ const genHashedPassword = require("../helpers/genHashedPassword");
 const fs = require("fs");
 const Mail = require("../helpers/sendingMail");
 const { DEFAULTPASS } = require("../config/env");
-// const uploadImage = require("../helpers/deletingImages");
 
 exports.getAllMembers = (request, response, next) => {
   MemberSchema.find({})
@@ -104,8 +103,8 @@ exports.updateMember = async (request, response, next) => {
       .then((data) => {
         // Delete Old Image
         if (request.file) {
-          // const path = memberOldData.image;
-          // fs.unlinkSync(path);
+          const path = memberOldData.image;
+          fs.unlinkSync(path);
         }
         response.status(200).json({ data: "updated" });
       })
@@ -139,6 +138,7 @@ exports.deleteMember = async (request, response, next) => {
   }
 };
 
+//search using autocompelete
 exports.autoComplete = (req, res, next) => {
   const data = "^" + req.params.data.trim();
   MemberSchema.find(
@@ -158,11 +158,9 @@ exports.autoComplete = (req, res, next) => {
     });
 };
 
-//END of Basic Functions
 
-//////////////nabila///////////////
+//search 
 exports.memberSearch = (request, response, error) => {
-  // console.log(request.query)
   let searchQuery = { ...request.query };
   let searchProperty = ["fullName", "email"];
   searchProperty.forEach((el) => {
@@ -171,7 +169,6 @@ exports.memberSearch = (request, response, error) => {
       delete searchQuery[el];
     }
   });
-  console.log(searchQuery);
   MemberSchema.find(searchQuery)
     .limit(5)
     .then((data) => {

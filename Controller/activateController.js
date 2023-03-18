@@ -7,8 +7,8 @@ const employeeSchema = mongoose.model("employees");
 const membersSchema = mongoose.model("members");
 const genHashedPassword = require("../helpers/genHashedPassword");
 const { DEFAULTPASS } = require("../config/env");
+// activate employee account
 exports.activateEmployee = async (request, response, next) => {
-  // activate account
   if (!request.file) {
     next(
       new Error(
@@ -42,8 +42,8 @@ exports.activateEmployee = async (request, response, next) => {
   }
 };
 
+// activate admin account
 exports.activateAdmin = async (request, response, next) => {
-  // activate account
   if (!request.file) {
     next(
       new Error(
@@ -77,8 +77,8 @@ exports.activateAdmin = async (request, response, next) => {
   }
 };
 
+// activate member account
 exports.activateMember = async (request, response, next) => {
-  // activate account
   if (!request.file) {
     next(
       new Error(

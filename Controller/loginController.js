@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-
 require("./../Model/adminModel");
 require("./../Model/employeeModel");
 require("./../Model/memberModel");
@@ -10,6 +9,7 @@ const memberSchema = mongoose.model("members");
 const comparePassword = require("../helpers/comparePassword");
 const { SECRET_KEY } = require("../config/env");
 
+//response generator general function
 function authResponse(id, role, response) {
   let token = jwt.sign({ id: id, role: role }, SECRET_KEY, { expiresIn: "3h" });
   response.status(200).json({
@@ -17,6 +17,8 @@ function authResponse(id, role, response) {
     token,
   });
 }
+
+//different users login
 exports.login = async (request, response, next) => {
   let admin = await adminSchema.findOne({
     email: request.body.email,

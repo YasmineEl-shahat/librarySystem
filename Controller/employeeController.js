@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 require("./../Model/employeeModel");
-// const sendMail = require("./../helpers/sendMails")
 const comparePassword = require("../helpers/comparePassword");
 const genHashedPassword = require("../helpers/genHashedPassword");
 const Mail = require("../helpers/sendingMail");
@@ -12,12 +11,15 @@ const { response } = require("express");
 
 const employeeSchema = mongoose.model("employees");
 
+// get all employe
 exports.getAllEmployee = (request, response, next) => {
   employeeSchema
     .find({})
     .then((data) => response.status(201).json({ data }))
     .catch((error) => next(error));
 };
+
+//get specific employee using param
 exports.getEmployee = (request, response, next) => {
   employeeSchema
     .findOne({ _id: request.params.id })
@@ -27,6 +29,8 @@ exports.getEmployee = (request, response, next) => {
     })
     .catch((error) => next(error));
 };
+
+//Adding employee
 exports.addEmployee = (request, response, next) => {
   new employeeSchema({
     _id: request.body._id,
@@ -129,6 +133,7 @@ exports.deleteEmployee = async (request, response, next) => {
   }
 };
 
+//employee search with autocompelete
 exports.autoComplete = (req, res, next) => {
   const data = req.params.data.trim().split(" ");
   const firstName = "^" + data[0];

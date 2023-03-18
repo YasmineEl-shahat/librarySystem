@@ -17,6 +17,16 @@ exports.getAllBooks = (request, response, next) => {
     .catch((error) => next(error));
 };
 
+//get specific book
+exports.getBook = (request, response, next) => {
+  bookSchema
+    .find({_id:request.params.id})
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};
+
 //add book
 exports.addBook = (request, response, next) => {
   if (request.body.avilable != request.body.numOfCopies)
@@ -47,6 +57,7 @@ exports.updateBook = async (request, response, next) => {
       { _id: request.body.id },
       { image: 1, _id: 0 }
     );
+    console.log(imagePath);
     if (!imagePath) next(new Error("Book not found"));
     if (imagePath) {
       const pathToImg = imagePath.image;
@@ -154,9 +165,8 @@ exports.getBooksYear = (request, response, next) => {
     .catch((error) => next(error));
 };
 
-////////////////nabila////////////////
+
 exports.bookSearch = (request, response, error) => {
-  // console.log(request.query);
   let searchQuery = { ...request.query };
   let searchProperty = ["auther", "publisher", "title"];
   searchProperty.forEach((el) => {
@@ -165,27 +175,8 @@ exports.bookSearch = (request, response, error) => {
       delete searchQuery[el];
     }
   });
-  // console.log(searchQuery);
   bookSchema
     .find(searchQuery, { avilable: 1, numOfCopies: 1, noOfBorrowing: 1 })
-    .then((data) => {
-      response.status(200).json({ data });
-    })
-    .catch((error) => next(error));
-};
-// Get Books Filtered By Year
-exports.groupBooksByYear = (request, response, next) => {
-  bookSchema
-    .aggregate([
-      {
-        $group: {
-          _id: {
-            year: { $year: "$publishingDate" },
-          },
-          ListOfNames: { $push: { Name: "$title", Author: "$auther" } },
-        },
-      },
-    ])
     .then((data) => {
       response.status(200).json({ data });
     })
@@ -232,6 +223,8 @@ exports.bookSearchFilter = async (request, response, next) => {
     response.status(500).send();
   }
 };
+
+
 
 // exports.bookSearchFilter = (request, response, next) => {
 //   const match = []

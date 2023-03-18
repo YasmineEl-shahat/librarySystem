@@ -34,8 +34,9 @@ router
 
 router
   .route("/books/:id")
-  .delete(checkBadminOrAdminOrEmployee, validateMW, controller.deleteBook);
-
+  .get(checkBadminOrAdminOrEmployee, controller.getBook)
+  .delete(checkBadminOrAdminOrEmployee, controller.deleteBook);
+  
 router
   .route("/newBooks")
   .get(checkGeneralAuthentication, controller.getNewBooks);

@@ -35,7 +35,4 @@ router
     controller.updateAdmin
   )
   .delete(intParam, validateMW, controller.deleteAdmin);
-
-// router.post("/testmail",mail.sendEmail)
-
 module.exports = router;

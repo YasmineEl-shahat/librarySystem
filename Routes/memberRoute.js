@@ -43,7 +43,6 @@ router
   .route("/memberSearch/:data")
   .get(checkBaseAdminOremployee, controller.autoComplete);
 
-/////////nabila//////////
 router
   .route("/searchMember/:fullName?/:email?")
   .get(checkAdmins, controller.memberSearch);

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 const genHashedPassword = require("../helpers/genHashedPassword");
-const { DEFAULTPASS } = require("../config/env");
+const { DEFAULTPASS } = require("./../config/env");
 const schema = new mongoose.Schema({
   _id: Number,
   fname: { type: String, required: true },

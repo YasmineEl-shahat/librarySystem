@@ -10,7 +10,7 @@ const {
 const router = express.Router();
 
 router
-  .route("/borrowedBooks")
+  .route("/AllBookOperation")
   .get(
     checkBadminOrAdminOrEmployee,
     bookOperationController.getAllBookOperation

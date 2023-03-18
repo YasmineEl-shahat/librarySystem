@@ -8,12 +8,15 @@ const Mail = require("../helpers/sendingMail");
 const comparePassword = require("../helpers/comparePassword");
 const { DEFAULTPASS } = require("../config/env");
 
+//get all admins in system
 exports.getAllAdmins = (request, response, next) => {
   adminSchema
     .find({})
     .then((data) => response.status(200).json({ data }))
     .catch((error) => next(error));
-};
+}; 
+
+//get admin using param
 exports.getAdmin = (request, response, next) => {
   adminSchema
     .findOne({ _id: request.params.id })
@@ -24,6 +27,7 @@ exports.getAdmin = (request, response, next) => {
     .catch((error) => next(error));
 };
 
+//add admin
 exports.addAdmin = (request, response, next) => {
   new adminSchema({
     _id: request.body._id,
@@ -43,6 +47,8 @@ exports.addAdmin = (request, response, next) => {
     .catch((error) => next(error));
 };
 
+
+//update admin using parameters
 exports.updateAdmin = async (request, response, next) => {
   try {
     let hashPassword = null;
@@ -100,6 +106,8 @@ exports.updateAdmin = async (request, response, next) => {
     next(error);
   }
 };
+
+//delete admin using parameters
 exports.deleteAdmin = async (request, response, next) => {
   let adminData = await adminSchema.findOne({ _id: request.params.id });
   if (!adminData) next(new Error("Admin not found"));
