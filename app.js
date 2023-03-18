@@ -16,6 +16,9 @@ const bookOperationsRoute = require("./Routes/bookOperationRoute");
 const activateRoute = require("./Routes/activateRoute");
 const reportRoute = require("./Routes/reportRoute");
 
+//docs
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUI = require("swagger-ui-express");
 //  open server using express
 const server = express(); // create http server -> http.createServer()
 
@@ -41,7 +44,27 @@ server.use(
     origin: "http://127.0.0.1:5500",
   })
 );
+//docs
+const options = {
+	definition: {
+		openapi: "3.0.0",
+		info: {
+			title: "power of girls Library API",
+			version: "1.0.0",
+			description: "A simple Express Library API",
+		},
+		servers: [
+			{
+				url: "http://localhost:"+port,
+			},
+		],
+	},
+	apis: ["./Routes/docs/*.js"],
+};
 
+const specs = swaggerJSDoc(options);
+server.use("/api", swaggerUI.serve, swaggerUI.setup(specs));
+/////////////
 morgan("tiny");
 morgan(":method :url :status :res[content-length] - :response-time ms");
 
