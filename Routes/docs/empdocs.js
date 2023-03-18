@@ -99,7 +99,7 @@
  *       type: object
  *       properties:
  *         _id:
- *           type: string
+ *           type: number
  *         fname:
  *           type: string
  *         lname:
@@ -132,7 +132,7 @@
  *       type: object
  *       properties:
  *         _id:
- *           type: string
+ *           type: number
  *         fname:
  *           type: string
  *         lname:
@@ -248,7 +248,7 @@
  *       type: object
  *       properties:
  *         _id:
- *           type: string
+ *           type: number
  *         fname:
  *           type: string
  *         lname:

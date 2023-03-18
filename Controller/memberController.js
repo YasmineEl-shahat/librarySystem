@@ -61,7 +61,7 @@ exports.updateMember = async (request, response, next) => {
   }
   try {
     const memberOldData = await MemberSchema.findOne(
-      { _id: request.body.id },
+      { _id: request.params.id },
       { image: 1, password: 1, _id: 0 }
     );
     if (!memberOldData) {
@@ -84,7 +84,7 @@ exports.updateMember = async (request, response, next) => {
     // Update Data
     MemberSchema.updateOne(
       {
-        _id: request.body.id,
+        _id: request.params.id,
       },
       {
         $set: {
