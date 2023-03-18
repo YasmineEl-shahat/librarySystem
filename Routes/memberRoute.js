@@ -10,6 +10,7 @@ const {
 } = require("./../Core/memberValidationArray");
 const validateMW = require("./../Core/validations/validateMW");
 const controller = require("./../Controller/memberController");
+const intParam = require("../Core/paramValidation").intParam;
 // Upload Image
 const uploadImage = require("../helpers/uploadingImages");
 const upload = uploadImage("Members");
@@ -23,19 +24,19 @@ router
     validatePostArray,
     validateMW,
     controller.addMember
-  )
+  );
+
+router
+  .route("/members/:id")
+  .get(checkBadminOrAdminOrEmployeeOrMember, intParam, controller.getMember)
   .patch(
     upload.single("image"),
     checkBadminOrAdminOrEmployeeOrMember,
     validatePatchArray,
     validateMW,
     controller.updateMember
-  );
-
-router
-  .route("/members/:id")
-  .get(checkBadminOrAdminOrEmployeeOrMember, validateMW, controller.getMember)
-  .delete(checkBadminOrAdminOrEmployee, validateMW, controller.deleteMember);
+  )
+  .delete(checkBadminOrAdminOrEmployee, intParam, controller.deleteMember);
 router
   .route("/memberSearch/:data")
   .get(checkBadminOrAdminOrEmployee, controller.autoComplete);
