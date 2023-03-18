@@ -54,7 +54,7 @@ router
 router.route("/AvailableBooks").get(controller.availableBook);
 router
   .route(
-    "/bookSearchFilter/:publishingDate?/:category?/:publisher?/:auther?/:avilable?"
+    "/bookSearchFilter"
   )
   .get(controller.bookSearchFilter);
 module.exports = router;
