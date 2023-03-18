@@ -6,6 +6,7 @@ const {
   checkBadminOrAdminOrEmployee,
   checkBadminOrAdminOrEmployeeOrMember,
   checkGeneralAuthentication,
+  checkBaseAdminOremployee,
 } = require("./../Core/auth/authenticationMW");
 const router = express.Router();
 
@@ -66,5 +67,9 @@ router
     checkBadminOrAdminOrEmployeeOrMember,
     bookOperationController.currentBorrowedBooks
   );
+
+router
+  .route("/blockedMembers")
+  .get(checkBaseAdminOremployee, bookOperationController.blockedMembers);
 
 module.exports = router;

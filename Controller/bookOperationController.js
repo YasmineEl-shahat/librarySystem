@@ -475,3 +475,61 @@ exports.currentBorrowedBooks = async (request, response, next) => {
     })
     .catch((error) => next(error));
 };
+
+exports.blockedMembers = (request, response, next) => {
+  const today = new Date();
+  today.setDate(today.getDate() - 1);
+  bookOperation
+    .aggregate([
+      {
+        $project: {
+          deadlineDate: 1,
+          return: 1,
+          memberId: 1,
+          type: 1,
+          _id: 0,
+        },
+      },
+      {
+        $match: {
+          deadlineDate: { $lt: today },
+          return: false,
+          type: "borrow",
+        },
+      },
+      {
+        $group: {
+          _id: "$memberId",
+          count: { $count: {} },
+          member: { $push: "$$ROOT" },
+        },
+      },
+      {
+        $lookup: {
+          from: "members",
+          localField: "_id",
+          foreignField: "_id",
+          as: "member",
+        },
+      },
+      {
+        $unwind: "$member",
+      },
+      {
+        $project: {
+          _id:0,
+          numberOfBooks: "$count",
+          memberId: "$member._id",
+          fullName: "$member.fullName",
+          email: "$member.email",
+          phoneNumber: "$member.phoneNumber",
+        },
+      },
+    ])
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
