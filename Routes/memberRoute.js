@@ -1,9 +1,9 @@
 const express = require("express");
 const {
+  checkAdmins,
   checkBaseAdminOremployee,
   checkBadminOrAdminOrEmployee,
   checkBadminOrEmployeeOrMember,
-  checkBadminOrAdminOrEmployeeOrMember,
 } = require("./../Core/auth/authenticationMW");
 const {
   validatePostArray,
