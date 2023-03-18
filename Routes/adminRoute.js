@@ -2,6 +2,7 @@
 const express = require("express");
 const validateMW = require("../Core/validations/validateMW");
 const controller = require("../Controller/adminController");
+const mail = require("../helpers/sendingMail");
 const validatePostArray =
   require("../Core/adminValidationArray").validatePostArray;
 const validatePatchArray =
@@ -21,11 +22,7 @@ router
   .route("/admins")
   .all(checkBaseAdmin)
   .get(controller.getAllAdmins)
-  .post(
-    validatePostArray,
-    validateMW,
-    controller.addAdmin
-  );
+  .post(validatePostArray, validateMW, controller.addAdmin);
 router
   .route("/admin/:id")
   .all(checkAdminOrBadmin)
@@ -38,5 +35,7 @@ router
     controller.updateAdmin
   )
   .delete(intParam, validateMW, controller.deleteAdmin);
+
+// router.post("/testmail",mail.sendEmail)
 
 module.exports = router;

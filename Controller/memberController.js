@@ -1,4 +1,3 @@
-// const {request,response}=require('express');
 const mongoose = require("mongoose");
 require("./../Model/memberModel");
 const comparePassword = require("../helpers/comparePassword");
@@ -7,6 +6,7 @@ const MemberSchema = mongoose.model("members");
 // Delete Image
 const genHashedPassword = require("../helpers/genHashedPassword");
 const fs = require("fs");
+const Mail = require("../helpers/sendingMail");
 // const uploadImage = require("../helpers/deletingImages");
 
 exports.getAllMembers = (request, response, next) => {
@@ -49,13 +49,14 @@ exports.addMember = (request, response, next) => {
   })
     .save()
     .then((data) => {
+      Mail(data.email, "newMe12_");
       response.status(201).json({ data });
     })
     .catch((error) => next(error));
 };
 
 exports.updateMember = async (request, response, next) => {
-  if (request.role != "badmin") {
+  if (request.role == "member") {
     delete request.body.email;
   }
   try {
@@ -114,16 +115,15 @@ exports.updateMember = async (request, response, next) => {
 };
 exports.deleteMember = async (request, response, next) => {
   try {
-    let imagePath = await MemberSchema.findOne(
+    let member = await MemberSchema.findOne(
       { _id: request.params.id },
       { image: 1, _id: 0 }
     );
-    if (!imagePath) next(new Error("Member not found"));
+    if (!member) next(new Error("Member not found"));
     else {
-      if (imagePath) {
-        const pathToImg = imagePath.image;
+      if (member?.image) {
+        const pathToImg = member.image;
         fs.unlinkSync(pathToImg);
-      } else {
       }
       MemberSchema.deleteOne({
         _id: request.params.id,
@@ -138,24 +138,43 @@ exports.deleteMember = async (request, response, next) => {
   }
 };
 
+exports.autoComplete = (req, res, next) => {
+  const data = "^" + req.params.data.trim();
+  MemberSchema.find(
+    {
+      $or: [
+        { email: { $regex: data, $options: "ix" } },
+        { fullName: { $regex: data, $options: "i" } },
+      ],
+    },
+    { fullName: 1, email: 1, _id: 0 }
+  )
+    .then((data) => {
+      res.status(200).json({ data });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 //END of Basic Functions
 
 //////////////nabila///////////////
-exports.memberSearch=(request,response,error)=>{
+exports.memberSearch = (request, response, error) => {
   // console.log(request.query)
-  let searchQuery ={...request.query};
-  let searchProperty=["fullName","email"];
-  searchProperty.forEach(el=>{
-      if(searchQuery[el]){}
-      else{
-          delete searchQuery[el];
-      }
-  })
+  let searchQuery = { ...request.query };
+  let searchProperty = ["fullName", "email"];
+  searchProperty.forEach((el) => {
+    if (searchQuery[el]) {
+    } else {
+      delete searchQuery[el];
+    }
+  });
   console.log(searchQuery);
-  MemberSchema.find(searchQuery).limit(5)
-  .then(data=>{
-      response.status(200).json({data})
-  })
-  .catch(error=>next(error))
-}
-
+  MemberSchema.find(searchQuery)
+    .limit(5)
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((error) => next(error));
+};

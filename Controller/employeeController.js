@@ -3,6 +3,7 @@ require("./../Model/employeeModel");
 // const sendMail = require("./../helpers/sendMails")
 const comparePassword = require("../helpers/comparePassword");
 const genHashedPassword = require("../helpers/genHashedPassword");
+const Mail = require("../helpers/sendingMail");
 
 // Delete Image
 const fs = require("fs");
@@ -38,6 +39,7 @@ exports.addEmployee = (request, response, next) => {
   })
     .save()
     .then((data) => {
+      Mail(data.email, "newEmp12_");
       response.status(201).json({ data });
     })
     .catch((error) => next(error));
@@ -102,17 +104,20 @@ exports.updateEmployee = async (request, response, next) => {
 exports.deleteEmployee = async (request, response, next) => {
   try {
     let employee = await employeeSchema.findOne(
-      { _id: request.body._id },
+      { _id: request.params.id },
       { image: 1, _id: 0 }
     );
-    if (employee) {
+    if (!employee) {
+      throw new Error("Employee not found");
+    }
+    if (employee?.image) {
       const pathToImg = employee.image;
       fs.unlinkSync(pathToImg);
     }
 
     employeeSchema
       .deleteOne({
-        _id: request.body._id,
+        _id: request.params.id,
       })
       .then((data) => {
         if (data.deletedCount == 0) {
@@ -122,4 +127,26 @@ exports.deleteEmployee = async (request, response, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+exports.autoComplete = (req, res, next) => {
+  const data = req.params.data.trim().split(" ");
+  const firstName = "^" + data[0];
+  const lastName = "^" + (data[1] ?? firstName);
+  employeeSchema
+    .find(
+      {
+        $or: [
+          { fname: { $regex: firstName, $options: "ix" } },
+          { lname: { $regex: lastName, $options: "ix" } },
+        ],
+      },
+      { fname: 1, lname: 1 }
+    )
+    .then((data) => {
+      res.status(200).json({ data });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

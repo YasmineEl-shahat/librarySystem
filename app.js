@@ -14,7 +14,11 @@ const memberRoute = require("./Routes/memberRoute");
 const bookRoute = require("./Routes/bookRoute");
 const bookOperationsRoute = require("./Routes/bookOperationRoute");
 const activateRoute = require("./Routes/activateRoute");
+const reportRoute = require("./Routes/reportRoute");
 
+//docs
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUI = require("swagger-ui-express");
 //  open server using express
 const server = express(); // create http server -> http.createServer()
 
@@ -40,7 +44,27 @@ server.use(
     origin: "http://127.0.0.1:5500",
   })
 );
+//docs
+const options = {
+	definition: {
+		openapi: "3.0.0",
+		info: {
+			title: "power of girls Library API",
+			version: "1.0.0",
+			description: "A simple Express Library API",
+		},
+		servers: [
+			{
+				url: "http://localhost:"+port,
+			},
+		],
+	},
+	apis: ["./Routes/*.js"],
+};
 
+const specs = swaggerJSDoc(options);
+server.use("/api", swaggerUI.serve, swaggerUI.setup(specs));
+/////////////
 morgan("tiny");
 morgan(":method :url :status :res[content-length] - :response-time ms");
 
@@ -74,6 +98,7 @@ server.use(employeeRoute);
 server.use(memberRoute);
 server.use(bookRoute);
 server.use(bookOperationsRoute);
+server.use(reportRoute);
 
 // not found middleware
 server.use((request, response, next) => {

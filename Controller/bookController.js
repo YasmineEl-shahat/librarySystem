@@ -202,6 +202,7 @@ exports.availableBook = (request, response, next) => {
 };
 exports.bookSearchFilter = async (request, response, next) => {
   try {
+    console.log(request.query);
     let allBooks = await bookSchema.aggregate([
       {
         $project: {
