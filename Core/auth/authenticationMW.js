@@ -105,6 +105,18 @@ module.exports.checkGeneralAuthentication = (request, response, next) => {
   else NotAuthorized(next);
 };
 
+module.exports.checkBadminOrEmployeeOrMember = (request, response, next) => {
+  if (
+    request.role == "badmin" ||
+    request.role == "employee" ||
+    (request.role == "member" && request.id == request.query.id) ||
+    (request.role == "member" && request.id == request.params.id) ||
+    (request.role == "member" && request.id == request.body.id)
+  )
+    next();
+  else NotAuthorized(next);
+};
+
 module.exports.checkBadminOrAdminOrEmployeeOrMember = (request, response, next) => {
   if (
     request.role == "badmin" ||

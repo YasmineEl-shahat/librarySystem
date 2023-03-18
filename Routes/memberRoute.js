@@ -1,7 +1,8 @@
 const express = require("express");
 const {
-  checkAdmins,
+  checkBaseAdminOremployee,
   checkBadminOrAdminOrEmployee,
+  checkBadminOrEmployeeOrMember,
   checkBadminOrAdminOrEmployeeOrMember,
 } = require("./../Core/auth/authenticationMW");
 const {
@@ -19,14 +20,14 @@ router
   .route("/members")
   .get(checkBadminOrAdminOrEmployee, controller.getAllMembers)
   .post(
-    checkBadminOrAdminOrEmployee,
+    checkBadminOrEmployeeOrMember,
     validatePostArray,
     validateMW,
     controller.addMember
   )
   .patch(
     upload.single("image"),
-    checkBadminOrAdminOrEmployeeOrMember,
+    checkBadminOrEmployeeOrMember,
     validatePatchArray,
     validateMW,
     controller.updateMember
@@ -34,11 +35,11 @@ router
 
 router
   .route("/members/:id")
-  .get(checkBadminOrAdminOrEmployeeOrMember, validateMW, controller.getMember)
-  .delete(checkBadminOrAdminOrEmployee, validateMW, controller.deleteMember);
+  .get(checkBadminOrEmployeeOrMember, validateMW, controller.getMember)
+  .delete(checkBaseAdminOremployee, validateMW, controller.deleteMember);
 router
   .route("/memberSearch/:data")
-  .get(checkBadminOrAdminOrEmployee, controller.autoComplete);
+  .get(checkBaseAdminOremployee, controller.autoComplete);
 
 /////////nabila//////////
 router
