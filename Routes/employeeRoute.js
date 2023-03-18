@@ -1,6 +1,6 @@
 const express = require("express");
 const controller = require("./../Controller/employeeController");
-const mailController=require("./../Controller/mailController")
+const mailController = require("../helpers/sendingMail");
 
 const {
   checkAdminOrBadmin,
@@ -32,7 +32,7 @@ router
     intParam,
     checkBadminOrAdminOrSpesificEmployee,
     validateMW,
-    controller.getEmployee,
+    controller.getEmployee
   )
   .patch(
     upload.single("image"),
@@ -44,11 +44,7 @@ router
     validateMW,
     controller.updateEmployee
   )
-  .delete(
-    intParam,
-    checkAdmins,
-    controller.deleteEmployee
-  );
+  .delete(intParam, checkAdmins, controller.deleteEmployee);
 
 router.route("/search/:data?").get(checkAdmins, controller.autoComplete);
 module.exports = router;

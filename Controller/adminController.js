@@ -4,7 +4,7 @@ const fs = require("fs");
 require("../Model/adminModel");
 const adminSchema = mongoose.model("admins");
 const genHashedPassword = require("../helpers/genHashedPassword");
-const Mail = require("./mailController");
+const Mail = require("../helpers/sendingMail");
 exports.getAllAdmins = (request, response, next) => {
   adminSchema
     .find({})

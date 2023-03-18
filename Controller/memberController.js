@@ -6,7 +6,7 @@ const MemberSchema = mongoose.model("members");
 // Delete Image
 const genHashedPassword = require("../helpers/genHashedPassword");
 const fs = require("fs");
-const Mail = require("./mailController");
+const Mail = require("../helpers/sendingMail");
 // const uploadImage = require("../helpers/deletingImages");
 
 exports.getAllMembers = (request, response, next) => {
