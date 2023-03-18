@@ -103,8 +103,8 @@ exports.updateMember = async (request, response, next) => {
       .then((data) => {
         // Delete Old Image
         if (request.file) {
-          // const path = memberOldData.image;
-          // fs.unlinkSync(path);
+          const path = memberOldData.image;
+          fs.unlinkSync(path);
         }
         response.status(200).json({ data: "updated" });
       })
