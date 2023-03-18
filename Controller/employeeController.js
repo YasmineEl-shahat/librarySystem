@@ -3,7 +3,7 @@ require("./../Model/employeeModel");
 // const sendMail = require("./../helpers/sendMails")
 const comparePassword = require("../helpers/comparePassword");
 const genHashedPassword = require("../helpers/genHashedPassword");
-const Mail = require("./mailController");
+const Mail = require("../helpers/sendingMail");
 
 // Delete Image
 const fs = require("fs");
