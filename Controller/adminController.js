@@ -5,6 +5,8 @@ require("../Model/adminModel");
 const adminSchema = mongoose.model("admins");
 const genHashedPassword = require("../helpers/genHashedPassword");
 const Mail = require("../helpers/sendingMail");
+const comparePassword = require("../helpers/comparePassword");
+
 exports.getAllAdmins = (request, response, next) => {
   adminSchema
     .find({})
@@ -46,6 +48,11 @@ exports.updateAdmin = async (request, response, next) => {
     let pathToImg = null;
     let adminData = await adminSchema.findOne({ _id: request.params.id });
     if (!adminData) throw new Error("Admin not found");
+
+    if (request.role == "admin" && adminData.isBase)
+      throw new Error("you can't update the owner data");
+    if (adminData.isBase && request.id !== 2 && adminData._id == 2)
+      throw new Error("you can't update super base admin data");
     // first time login baseAdmin update to image
     if (
       (adminData.image == undefined && request.file) ||
@@ -93,19 +100,23 @@ exports.updateAdmin = async (request, response, next) => {
   }
 };
 exports.deleteAdmin = async (request, response, next) => {
-  let adminData = await adminSchema.findOne(
-    { _id: request.params.id },
-    { image: 1, _id: 0 }
-  );
-  if (adminData) {
-    const pathToImg = adminData.image;
-    fs.unlinkSync(pathToImg);
+  let adminData = await adminSchema.findOne({ _id: request.params.id });
+  if (!adminData) next(new Error("Admin not found"));
+  else if (request.role == "admin" && adminData.isBase)
+    next(new Error("you can't delete the owner data"));
+  else if (adminData.isBase && adminData._id == 2)
+    next(new Error("you can't delete super base admin data"));
+  else {
+    if (adminData?.image) {
+      const pathToImg = adminData.image;
+      fs.unlinkSync(pathToImg);
+    }
+    adminSchema
+      .deleteOne({ _id: request.params.id })
+      .then((data) => {
+        if (data.deletedCount == 0) throw new Error("Admin not found");
+        else response.status(200).json({ data: "deleted" });
+      })
+      .catch((error) => next(error));
   }
-  adminSchema
-    .deleteOne({ _id: request.params.id })
-    .then((data) => {
-      if (data.deletedCount == 0) throw new Error("Admin not found");
-      else response.status(200).json({ data: "deleted" });
-    })
-    .catch((error) => next(error));
 };
