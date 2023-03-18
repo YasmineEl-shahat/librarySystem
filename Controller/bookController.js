@@ -141,12 +141,12 @@ exports.getBooksYear = (request, response, next) => {
         $project: {
           _id: 0,
           title: 1,
-          publishingDate: {
-            $year: "$publishingDate",
+          arriveDate: {
+            $year: "$createdAt",
           },
         },
       },
-      { $match: { publishingDate: yearValue } },
+      { $match: { arriveDate: yearValue } },
     ])
     .then((data) => {
       response.status(200).json({ data });

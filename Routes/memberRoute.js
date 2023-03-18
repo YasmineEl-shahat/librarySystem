@@ -4,6 +4,7 @@ const {
   checkBaseAdminOremployee,
   checkBadminOrAdminOrEmployee,
   checkBadminOrEmployeeOrMember,
+  checkBadminOrAdminOrEmployeeOrMember
 } = require("./../Core/auth/authenticationMW");
 const {
   validatePostArray,
