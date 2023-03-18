@@ -24,7 +24,7 @@ router
   .get(controller.getAllAdmins)
   .post(validatePostArray, validateMW, controller.addAdmin);
 router
-  .route("/admin/:id")
+  .route("/admins/:id")
   .all(checkAdminOrBadmin)
   .get(intParam, validateMW, controller.getAdmin)
   .patch(

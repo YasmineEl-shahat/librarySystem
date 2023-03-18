@@ -15,14 +15,14 @@ const bookRoute = require("./Routes/bookRoute");
 const bookOperationsRoute = require("./Routes/bookOperationRoute");
 const activateRoute = require("./Routes/activateRoute");
 const reportRoute = require("./Routes/reportRoute");
-
+const { PORT } = require("./config/env");
 //docs
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
 //  open server using express
 const server = express(); // create http server -> http.createServer()
 
-let port = process.env.port || 8080;
+let port = PORT;
 mongoose.set("strictQuery", true);
 mongoose
   .connect(
@@ -46,20 +46,20 @@ server.use(
 );
 //docs
 const options = {
-	definition: {
-		openapi: "3.0.0",
-		info: {
-			title: "power of girls Library API",
-			version: "1.0.0",
-			description: "A simple Express Library API",
-		},
-		servers: [
-			{
-				url: "http://localhost:"+port,
-			},
-		],
-	},
-	apis: ["./Routes/docs/*.js"],
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "power of girls Library API",
+      version: "1.0.0",
+      description: "A simple Express Library API",
+    },
+    servers: [
+      {
+        url: "http://localhost:" + port,
+      },
+    ],
+  },
+  apis: ["./Routes/docs/*.js"],
 };
 
 const specs = swaggerJSDoc(options);

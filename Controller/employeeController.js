@@ -4,7 +4,7 @@ require("./../Model/employeeModel");
 const comparePassword = require("../helpers/comparePassword");
 const genHashedPassword = require("../helpers/genHashedPassword");
 const Mail = require("../helpers/sendingMail");
-
+const { DEFAULTPASS } = require("../config/env");
 // Delete Image
 const fs = require("fs");
 const { request } = require("http");
@@ -39,7 +39,7 @@ exports.addEmployee = (request, response, next) => {
   })
     .save()
     .then((data) => {
-      Mail(data.email, "newEmp12_");
+      Mail(data.email, DEFAULTPASS);
       response.status(201).json({ data });
     })
     .catch((error) => next(error));
@@ -58,7 +58,7 @@ exports.updateEmployee = async (request, response, next) => {
     //  first time login admin update to image
     if (
       (employee.image == undefined && request.file) ||
-      (await comparePassword("newEmp12_", employee.password))
+      (await comparePassword(DEFAULTPASS, employee.password))
     ) {
       throw new Error(
         "You Can Not Update Image OR Password Before Member First Login"

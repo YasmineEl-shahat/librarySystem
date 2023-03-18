@@ -22,12 +22,12 @@ const upload = uploadImage("employee");
 const router = express.Router();
 
 router
-  .route("/employee")
+  .route("/employees")
   .get(checkAdmins, controller.getAllEmployee)
   .post(checkAdmins, validatePostArray, validateMW, controller.addEmployee);
 
 router
-  .route("/employee/:id")
+  .route("/employees/:id")
   .get(
     intParam,
     checkBadminOrAdminOrSpesificEmployee,

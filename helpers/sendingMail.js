@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 const mailgen = require("mailgen");
-const { EMAIL, PASSWORD } = require("../env");
+const { EMAIL, PASSWORD } = require("../config/env");
 const { response, request } = require("express");
 module.exports = (recieverMail, password) => {
   let config = {
@@ -34,8 +34,8 @@ module.exports = (recieverMail, password) => {
     to: recieverMail,
     subject: "welcome to the library",
     text: "successfuly register in our library ",
-    html: `<h1>please activate your account </h1>
-        -add image and this is your default <ul><li>password :${password}</li></ul>`,
+    html: `<h3>Please activate your account </h3>
+        <ul><li>Add image</li><li>Update this password :${password}</li></ul>`,
   };
   transporter.sendMail(message, function (error, info) {
     if (error) {

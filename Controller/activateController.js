@@ -6,7 +6,7 @@ const adminSchema = mongoose.model("admins");
 const employeeSchema = mongoose.model("employees");
 const membersSchema = mongoose.model("members");
 const genHashedPassword = require("../helpers/genHashedPassword");
-
+const { DEFAULTPASS } = require("../config/env");
 exports.activateEmployee = async (request, response, next) => {
   // activate account
   if (!request.file) {
@@ -15,10 +15,13 @@ exports.activateEmployee = async (request, response, next) => {
         "you have add image to complete your data to activate your acount!"
       )
     );
-  } else if (request.body.password == "newEmp12_")
+  } else if (request.body.password == DEFAULTPASS)
     next(new Error("you have change your password"));
   else {
-    let employee = await employeeSchema.findOne({   _id: request.params.id }, { image: 1 });
+    let employee = await employeeSchema.findOne(
+      { _id: request.params.id },
+      { image: 1 }
+    );
     if (employee.image) next(new Error("you are aready activated"));
     else {
       employeeSchema
@@ -47,10 +50,13 @@ exports.activateAdmin = async (request, response, next) => {
         "you have add image to complete your data to activate your acount!"
       )
     );
-  } else if (request.body.password == "newAd12_")
+  } else if (request.body.password == DEFAULTPASS)
     next(new Error("you have change your password"));
   else {
-    let admin = await adminSchema.findOne({  _id: request.params.id }, { image: 1 });
+    let admin = await adminSchema.findOne(
+      { _id: request.params.id },
+      { image: 1 }
+    );
     if (admin.image) next(new Error("you are aready activated"));
     else {
       adminSchema
@@ -79,10 +85,13 @@ exports.activateMember = async (request, response, next) => {
         "you have add image to complete your data to activate your acount!"
       )
     );
-  } else if (request.body.password == "newMe12_")
+  } else if (request.body.password == DEFAULTPASS)
     next(new Error("you have change your password"));
   else {
-    let member = await membersSchema.findOne({  _id: request.params.id }, { image: 1 });
+    let member = await membersSchema.findOne(
+      { _id: request.params.id },
+      { image: 1 }
+    );
     if (member.image) next(new Error("you are aready activated"));
     else {
       membersSchema

@@ -6,6 +6,7 @@ const adminSchema = mongoose.model("admins");
 const genHashedPassword = require("../helpers/genHashedPassword");
 const Mail = require("../helpers/sendingMail");
 const comparePassword = require("../helpers/comparePassword");
+const { DEFAULTPASS } = require("../config/env");
 
 exports.getAllAdmins = (request, response, next) => {
   adminSchema
@@ -36,7 +37,7 @@ exports.addAdmin = (request, response, next) => {
   })
     .save()
     .then((data) => {
-      Mail(data.email, "newAd12_");
+      Mail(data.email, DEFAULTPASS);
       response.status(201).json({ data });
     })
     .catch((error) => next(error));
@@ -56,7 +57,7 @@ exports.updateAdmin = async (request, response, next) => {
     // first time login baseAdmin update to image
     if (
       (adminData.image == undefined && request.file) ||
-      (await comparePassword("newAd12_", adminData.password))
+      (await comparePassword(DEFAULTPASS, adminData.password))
     ) {
       throw new Error(
         "You Can Not Update Image OR Password Before Member First Login"

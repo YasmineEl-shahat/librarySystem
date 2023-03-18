@@ -8,11 +8,10 @@ const adminSchema = mongoose.model("admins");
 const employeeSchema = mongoose.model("employees");
 const memberSchema = mongoose.model("members");
 const comparePassword = require("../helpers/comparePassword");
-
-let sk = process.env.SECRET_KEY || "SK";
+const { SECRET_KEY } = require("../config/env");
 
 function authResponse(id, role, response) {
-  let token = jwt.sign({ id: id, role: role }, sk, { expiresIn: "3h" });
+  let token = jwt.sign({ id: id, role: role }, SECRET_KEY, { expiresIn: "3h" });
   response.status(200).json({
     message: "Authenticated",
     token,
