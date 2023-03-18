@@ -202,7 +202,7 @@ exports.availableBook = (request, response, next) => {
 };
 exports.bookSearchFilter = async (request, response, next) => {
   try {
-    console.log(request.query);
+    console.log(request.body);
     let allBooks = await bookSchema.aggregate([
       {
         $project: {
@@ -219,7 +219,7 @@ exports.bookSearchFilter = async (request, response, next) => {
       },
     ]);
 
-    const filters = request.query;
+    const filters = request.body;
     let res = allBooks.filter((book) => {
       let isValid = true;
       for (key in filters) {
@@ -234,14 +234,22 @@ exports.bookSearchFilter = async (request, response, next) => {
 };
 
 // exports.bookSearchFilter = (request, response, next) => {
-//   const match = {...request.query}
-//   console.log(match);
-//      if(request.query.year){
-//        const year = Number(request.query.year);
-//        match.year=year;
+//   const match = []
+//    if(request.body.year){
+//        const year = Number(request.body.publishingDate);
+//        match.push({year:year})
 //    }
-//     if(request.query.category){
-//       match.category=category;
+//    if(request.body.category){
+//       match.push({category:request.body.category})
+//     }
+//     if(request.body.author){
+//       match.push({author:request.body.author})
+//     }
+//    if(request.body.avilable){
+//       match.push({avilable:request.body.avilable})
+//     }
+//     if(request.body.publisher){
+//       match.push({publisher:request.body.publisher})
 //     }
 
 //   bookSchema.aggregate([
@@ -257,10 +265,11 @@ exports.bookSearchFilter = async (request, response, next) => {
 //         author:1,
 //         avilable:{$gt:["avilable",1]}
 //       },
-//     },{ $match: match },
+//     },{ $match: {$and: match }},
 //     ])
 
 //     .then((data) => {
+//       console.log(match)
 //       response.status(200).json({ data });
 //     })
 //     .catch((error) => next(error));
