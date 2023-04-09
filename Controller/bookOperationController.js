@@ -154,7 +154,7 @@ exports.readBook = async (request, response, next) => {
   );
   let member = await memberSchema.findOne(
     { _id: member_id },
-    { blockedDate: 1, _id: 0 }
+    { blockedDate: 1, readingBooks: 1, _id: 0 }
   );
   let operation = await bookOperation.findOne(
     {
@@ -185,6 +185,18 @@ exports.readBook = async (request, response, next) => {
           type: "read",
           return: false,
         }).save();
+        let readedBefore = member.readingBooks.indexOf(book_id) != -1;
+
+        if (!readedBefore) {
+          await memberSchema.updateOne(
+            { _id: member_id },
+            {
+              $push: {
+                readingBooks: book_id,
+              },
+            }
+          );
+        }
         response
           .status(200)
           .json({ message: "reading operation completed successfully" });
