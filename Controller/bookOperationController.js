@@ -49,7 +49,6 @@ exports.borrowBooks = async (request, response, next) => {
     {
       memberId: request.body.member_id,
       bookId: request.body.book_id,
-      return: false,
     },
     { return: 1, _id: 0 }
   );
@@ -161,7 +160,6 @@ exports.readBook = async (request, response, next) => {
     {
       memberId: member_id,
       bookId: book_id,
-      return: false,
     },
     { return: 1, _id: 0 }
   );
@@ -476,7 +474,7 @@ exports.currentBorrowedBooks = async (request, response, next) => {
     .catch((error) => next(error));
 };
 
-exports.blockedMembers = (request, response, next) => {
+exports.membersViolatedDate = (request, response, next) => {
   const today = new Date();
   today.setDate(today.getDate() - 1);
   bookOperation
@@ -517,7 +515,7 @@ exports.blockedMembers = (request, response, next) => {
       },
       {
         $project: {
-          _id:0,
+          _id: 0,
           numberOfBooks: "$count",
           memberId: "$member._id",
           fullName: "$member.fullName",
