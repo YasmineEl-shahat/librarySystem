@@ -69,7 +69,7 @@ router
   );
 
 router
-  .route("/blockedMembers")
-  .get(checkBaseAdminOremployee, bookOperationController.blockedMembers);
+  .route("/membersViolatedDate")
+  .get(checkBaseAdminOremployee, bookOperationController.membersViolatedDate);
 
 module.exports = router;

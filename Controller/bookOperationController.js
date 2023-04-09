@@ -476,7 +476,7 @@ exports.currentBorrowedBooks = async (request, response, next) => {
     .catch((error) => next(error));
 };
 
-exports.blockedMembers = (request, response, next) => {
+exports.membersViolatedDate = (request, response, next) => {
   const today = new Date();
   today.setDate(today.getDate() - 1);
   bookOperation
