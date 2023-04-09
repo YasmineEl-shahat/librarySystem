@@ -68,8 +68,8 @@ router
     bookOperationController.currentBorrowedBooks
   );
 
-router
-  .route("/blockedMembers")
-  .get(checkBaseAdminOremployee, bookOperationController.blockedMembers);
+// router
+//   .route("/blockedMembers")
+//   .get(checkBaseAdminOremployee, bookOperationController.blockedMembers);
 
 module.exports = router;
