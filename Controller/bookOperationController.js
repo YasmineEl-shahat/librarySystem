@@ -161,7 +161,6 @@ exports.readBook = async (request, response, next) => {
     {
       memberId: member_id,
       bookId: book_id,
-      return: false,
     },
     { return: 1, _id: 0 }
   );
@@ -517,7 +516,7 @@ exports.blockedMembers = (request, response, next) => {
       },
       {
         $project: {
-          _id:0,
+          _id: 0,
           numberOfBooks: "$count",
           memberId: "$member._id",
           fullName: "$member.fullName",
