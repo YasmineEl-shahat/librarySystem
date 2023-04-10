@@ -12,7 +12,7 @@ exports.getAllBooks = (request, response, next) => {
   bookSchema
     .find({})
     .then((data) => {
-      response.status(200).json({ data });
+      response.status(200).json( data );
     })
     .catch((error) => next(error));
 };
