@@ -41,7 +41,7 @@ mongoose
 
 server.use(
   cors({
-    origin: "*",credentials: true
+    origin: "*",
   })
 );
 //docs
