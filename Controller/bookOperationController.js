@@ -155,13 +155,12 @@ exports.readBook = async (request, response, next) => {
   );
   let member = await memberSchema.findOne(
     { _id: member_id },
-    { blockedDate: 1, _id: 0 }
+    { blockedDate: 1, readingBooks: 1, _id: 0 }
   );
   let operation = await bookOperation.findOne(
     {
       memberId: member_id,
       bookId: book_id,
-      return: false,
     },
     { return: 1, _id: 0 }
   );
@@ -187,6 +186,18 @@ exports.readBook = async (request, response, next) => {
           type: "read",
           return: false,
         }).save();
+        let readedBefore = member.readingBooks.indexOf(book_id) != -1;
+
+        if (!readedBefore) {
+          await memberSchema.updateOne(
+            { _id: member_id },
+            {
+              $push: {
+                readingBooks: book_id,
+              },
+            }
+          );
+        }
         response
           .status(200)
           .json({ message: "reading operation completed successfully" });
@@ -476,7 +487,7 @@ exports.currentBorrowedBooks = async (request, response, next) => {
     .catch((error) => next(error));
 };
 
-exports.blockedMembers = (request, response, next) => {
+exports.membersViolatedDate = (request, response, next) => {
   const today = new Date();
   today.setDate(today.getDate() - 1);
   bookOperation
