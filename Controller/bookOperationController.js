@@ -33,6 +33,9 @@ exports.getBorrowedBook = (request, response, next) => {
 exports.getReadingBook = (request, response, next) => {
   bookOperation
     .find({ type: "read" })
+    .populate({ path: "bookId", select: { title: 1, _id: 0 } })
+    .populate({ path: "memberId", select: { fullName: 1, _id: 0 } })
+    .populate({ path: "employeeId", select: { fname: 1, lname: 1, _id: 0 } })
     .then((data) => {
       response.status(200).json({ data });
     })
@@ -135,7 +138,7 @@ exports.borrowBooksList = async (request, response, next) => {
       {
         $project: {
           _id: 0,
-          bookTitle: "$book.title",
+          title: "$book.title",
           auther: "$book.auther",
           publisher: "$book.publisher",
           category: "$book.category",
@@ -319,7 +322,7 @@ exports.readBooksList = async (request, response, next) => {
       {
         $project: {
           _id: 0,
-          bookTitle: "$book.title",
+          title: "$book.title",
           auther: "$book.auther",
           publisher: "$book.publisher",
           category: "$book.category",
@@ -531,7 +534,7 @@ exports.membersViolatedDate = (request, response, next) => {
       },
       {
         $project: {
-          _id:0,
+          _id: 0,
           numberOfBooks: "$count",
           memberId: "$member._id",
           fullName: "$member.fullName",
