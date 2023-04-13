@@ -12,7 +12,16 @@ exports.getAllBooks = (request, response, next) => {
   bookSchema
     .find({})
     .then((data) => {
-      response.status(200).json( data );
+      if (data) {
+        data.forEach((el) => {
+          // console.log(el.image.split("images")[1]);
+          // console.log(el.image.split("images")[1].replace("\\", ""));
+          el.image = `http://localhost:8080/images${el.image
+            .split("images")[1]
+            .replaceAll("//", "/")}`;
+        });
+      }
+      response.status(200).json(data);
     })
     .catch((error) => next(error));
 };
@@ -20,9 +29,17 @@ exports.getAllBooks = (request, response, next) => {
 //get specific book
 exports.getBook = (request, response, next) => {
   bookSchema
-    .find({_id:request.params.id})
+    .find({ _id: request.params.id })
     .then((data) => {
-      response.status(200).json({ data });
+      if (data) {
+        data.forEach((el) => {
+          
+          el.image = `http://localhost:8080/images${el.image
+            .split("images")[1]
+            .replaceAll("\\", "/")}`;
+        });
+      }
+      response.status(200).json({ data }); // الصوره
     })
     .catch((error) => next(error));
 };
@@ -165,7 +182,6 @@ exports.getBooksYear = (request, response, next) => {
     .catch((error) => next(error));
 };
 
-
 exports.bookSearch = (request, response, error) => {
   let searchQuery = { ...request.query };
   let searchProperty = ["auther", "publisher", "title"];
@@ -223,8 +239,6 @@ exports.bookSearchFilter = async (request, response, next) => {
     response.status(500).send();
   }
 };
-
-
 
 // exports.bookSearchFilter = (request, response, next) => {
 //   const match = []
