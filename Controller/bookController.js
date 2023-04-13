@@ -133,7 +133,7 @@ exports.getNewBooks = (request, response, next) => {
         title: 1,
         auther: 1,
       }
-    )
+    ).limit(4)
     .then((data) => {
       response.status(200).json({ data });
     })
@@ -267,3 +267,14 @@ exports.bookSearchFilter = async (request, response, next) => {
 //     })
 //     .catch((error) => next(error));
 // };
+
+
+//get 4 books
+exports.getCountBook = (request, response, next) => {
+  bookSchema
+    .find({}).limit(4)
+    .then((data) => {
+      response.status(200).json( data );
+    })
+    .catch((error) => next(error));
+};
