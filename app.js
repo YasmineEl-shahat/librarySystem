@@ -14,6 +14,8 @@ const memberRoute = require("./Routes/memberRoute");
 const bookRoute = require("./Routes/bookRoute");
 const bookOperationsRoute = require("./Routes/bookOperationRoute");
 const activateRoute = require("./Routes/activateRoute");
+const isActivateRoute = require("./Routes/isActivateRoute");
+
 const reportRoute = require("./Routes/reportRoute");
 const { PORT } = require("./config/env");
 //docs
@@ -82,12 +84,14 @@ morgan(function (tokens, request, res) {
 morgan("dev");
 server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
-server.use(lol)
+server.use(lol);
 // login Route
 server.use(loginRoute);
 // auth middleware
 server.use(authenticationMW);
+
 server.use(activateRoute);
+server.use(isActivateRoute)
 
 // isActivate
 server.use(activateMW);
