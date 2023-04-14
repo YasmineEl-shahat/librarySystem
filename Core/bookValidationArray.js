@@ -77,5 +77,5 @@ exports.validatePatchArray = [
 ];
 
 exports.validateBookOperation =[
-  body("deadlineDate").isDate().withMessage("You should enter deadlineDate")
+  // body("deadlineDate").isDate().withMessage("You should enter deadlineDate")
 ]

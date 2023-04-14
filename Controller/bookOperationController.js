@@ -55,10 +55,11 @@ exports.borrowBooks = async (request, response, next) => {
     {
       memberId: request.body.member_id,
       bookId: request.body.book_id,
-      return: false,  
+      return: false,
     },
     { return: 1, _id: 0 }
   );
+  console.log(request.body.book_id);
   if (book == null) next(new Error("book not found"));
   if (member == null) next(new Error("member not found"));
   else {
@@ -77,7 +78,7 @@ exports.borrowBooks = async (request, response, next) => {
           bookId: request.body.book_id,
           memberId: request.body.member_id,
           employeeId: request.id,
-          deadlineDate: request.body.deadlineDate,        
+          deadlineDate: request.body.deadlineDate,
           type: "borrow",
         }).save();
         response.status(200).json({ message: "you borrow book" });
@@ -85,7 +86,7 @@ exports.borrowBooks = async (request, response, next) => {
         next(error);
       }
     } else next(new Error("you can't borrow book"));
-  }   
+  }
 }; //borrow
 
 // List Of Borrowed Book
@@ -134,7 +135,7 @@ exports.borrowBooksList = async (request, response, next) => {
       },
       {
         $unwind: "$book",
-      },
+      }, // by id ??
       {
         $project: {
           _id: 0,

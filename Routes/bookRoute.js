@@ -57,4 +57,8 @@ router
   .route("/bookSearchFilter")
   .post(checkGeneralAuthentication, controller.bookSearchFilter);
 
+router
+  .route("/getCountBook")
+  .get(checkGeneralAuthentication, controller.getCountBook);
+
 module.exports = router;
