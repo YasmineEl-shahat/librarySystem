@@ -145,11 +145,7 @@ exports.getNewBooks = (request, response, next) => {
       {
         createdAt: { $gte: date },
       },
-      {
-        _id: 0,
-        title: 1,
-        auther: 1,
-      }
+     
     ).limit(4)
     .then((data) => {
       response.status(200).json({ data });
@@ -201,7 +197,7 @@ exports.bookSearch = (request, response, error) => {
 
 exports.availableBook = (request, response, next) => {
   bookSchema
-    .find({ avilable: { $gt: 1 } }, { title: 1, avilable: 1, _id: 0 })
+    .find({ avilable: { $gt: 1 } })
     .then((data) => {
       response.status(200).json({ data });
     })
