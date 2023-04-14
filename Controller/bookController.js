@@ -204,7 +204,7 @@ exports.bookSearchFilter = async (request, response, next) => {
           },
           publisher: 1,
           category: 1,
-          author: 1,
+          auther: 1,
           avilable: { $gt: ["avilable", 1] },
         },
       },

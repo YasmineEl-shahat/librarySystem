@@ -55,6 +55,6 @@ router
 
 router
   .route("/bookSearchFilter")
-  .get(checkGeneralAuthentication, controller.bookSearchFilter);
+  .post(checkGeneralAuthentication, controller.bookSearchFilter);
 
 module.exports = router;
