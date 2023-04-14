@@ -154,8 +154,9 @@ exports.borrowBooksList = async (request, response, next) => {
 
 //give books for reading
 exports.readBook = async (request, response, next) => {
-  const book_id = request.query.book_id;
-  const member_id = request.query.member_id;
+  const book_id = request.body.book_id;
+  const member_id = request.body.member_id;
+  console.log(member_id, book_id);
   let book = await bookSchema.findOne(
     { _id: book_id },
     { avilable: 1, numOfCopies: 1, _id: 0 }
@@ -193,18 +194,6 @@ exports.readBook = async (request, response, next) => {
           type: "read",
           return: false,
         }).save();
-        let readedBefore = member.readingBooks.indexOf(book_id) != -1;
-
-        if (!readedBefore) {
-          await memberSchema.updateOne(
-            { _id: member_id },
-            {
-              $push: {
-                readingBooks: book_id,
-              },
-            }
-          );
-        }
         response
           .status(200)
           .json({ message: "reading operation completed successfully" });

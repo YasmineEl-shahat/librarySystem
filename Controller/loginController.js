@@ -11,7 +11,8 @@ const { SECRET_KEY } = require("../config/env");
 
 //response generator general function
 function authResponse(id, role, response) {
-  let token = jwt.sign({ id: id, role: role }, SECRET_KEY, { expiresIn: "3h" });
+  // let token = jwt.sign({ id: id, role: role }, SECRET_KEY, { expiresIn: "3h" });
+  let token = jwt.sign({ id: id, role: role }, SECRET_KEY);
   response.status(200).json({
     message: "Authenticated",
     token,
