@@ -87,13 +87,16 @@ server.use(express.urlencoded({ extended: false }));
 server.use(lol);
 // login Route
 server.use(loginRoute);
+server.use(isActivateRoute)
+
 // auth middleware
 server.use(authenticationMW);
 
 server.use(activateRoute);
-server.use(isActivateRoute)
+
 
 // isActivate
+
 server.use(activateMW);
 
 // Routes
