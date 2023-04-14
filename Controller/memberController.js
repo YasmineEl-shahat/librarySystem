@@ -88,7 +88,7 @@ exports.updateMember = async (request, response, next) => {
       },
       {
         $set: {
-          fullName: request.body.name,
+          fullName: request.body.fullName,
           password: hashUPassword,
           phoneNumber: request.body.phoneNumber,
           birthdate: request.body.birthdate,

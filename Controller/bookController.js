@@ -69,48 +69,46 @@ exports.addBook = (request, response, next) => {
 
 //edit book
 exports.updateBook = async (request, response, next) => {
-  try {
-    let imagePath = await bookSchema.findOne(
-      { _id: request.body.id },
-      { image: 1, _id: 0 }
-    );
-    console.log(imagePath);
-    if (!imagePath) next(new Error("Book not found"));
-    if (imagePath) {
-      const pathToImg = imagePath.image;
-      fs.unlinkSync(pathToImg);
+    // let imagePath = await bookSchema.findOne(
+    //   { _id: request.param.id },
+      // { image: 1, _id: 0 }
+    // );
+    // console.log(imagePath);
+    // if (!imagePath) next(new Error("Book not found"));
+    // if (imagePath) {
+    //   const pathToImg = imagePath.image;
+    //   fs.unlinkSync(pathToImg);
+    // }
+try {
+  console.log(request.params.id);
+  let bookData = await bookSchema.updateOne(
+    { _id: request.params.id },
+    {
+      $set: {
+        title: request.body.title,
+        auther: request.body.auther,
+        publisher: request.body.publisher,
+        publishingDate: request.body.publishingDate,
+        category: request.body.category,
+        edition: request.body.edition,
+        pages: request.body.pages,
+        // image: request.file?.path ? request.file.path : request.body.image,
+        avilable: request.body.avilable,
+        numOfCopies: request.body.numOfCopies,
+        shelfNo: request.body.shelfNo,
+      },
     }
-
-    let bookData = await bookSchema
-      .updateOne(
-        {
-          _id: request.body.id,
-        },
-        {
-          $set: {
-            title: request.body.title,
-            auther: request.body.auther,
-            publisher: request.body.publisher,
-            publishingDate: request.body.publishingDate,
-            category: request.body.category,
-            edition: request.body.edition,
-            pages: request.body.pages,
-            image: request.file?.path ? request.file.path : bookData.image,
-            avilable: request.body.avilable,
-            numOfCopies: request.body.numOfCopies,
-            shelfNo: request.body.shelfNo,
-          },
-        }
-      )
-      .then((data) => {
-        if (data.matchedCount == 0) next(new Error("Book not found"));
-        else response.status(200).json({ data: "updated" });
-      });
-  } catch (error) {
-    next(error);
+  );
+  if (bookData.matchedCount === 0) {
+    throw new Error("Book not found");
+  } else {
+    response.status(201).json({ data: "updated" });
   }
+} 
+catch (error) {
+  next(error);
+}
 };
-
 //delete book
 exports.deleteBook = async (request, response, next) => {
   try {
@@ -145,11 +143,7 @@ exports.getNewBooks = (request, response, next) => {
       {
         createdAt: { $gte: date },
       },
-      {
-        _id: 0,
-        title: 1,
-        auther: 1,
-      }
+     
     ).limit(4)
     .then((data) => {
       response.status(200).json({ data });
@@ -201,7 +195,7 @@ exports.bookSearch = (request, response, error) => {
 
 exports.availableBook = (request, response, next) => {
   bookSchema
-    .find({ avilable: { $gt: 1 } }, { title: 1, avilable: 1, _id: 0 })
+    .find({ avilable: { $gt: 1 } })
     .then((data) => {
       response.status(200).json({ data });
     })
