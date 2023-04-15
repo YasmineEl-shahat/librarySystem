@@ -33,7 +33,6 @@ exports.getBook = (request, response, next) => {
     .then((data) => {
       if (data) {
         data.forEach((el) => {
-          
           el.image = `http://localhost:8080/images${el.image
             .split("images")[1]
             .replaceAll("\\", "/")}`;
@@ -116,7 +115,8 @@ exports.deleteBook = async (request, response, next) => {
       { _id: request.params.id },
       { image: 1, _id: 0 }
     );
-    if (imagePath) {
+
+    if (imagePath.image) {
       const pathToImg = imagePath.image;
       fs.unlinkSync(pathToImg);
     }
@@ -127,7 +127,9 @@ exports.deleteBook = async (request, response, next) => {
       .then((data) => {
         if (data.deletedCount == 0) {
           next(new Error("book not found"));
-        } else response.status(200).json({ data: "deleted" });
+        } else {
+          response.status(200).json({ data: "deleted" });
+        }
       });
   } catch (error) {
     next(error);
@@ -277,13 +279,13 @@ exports.bookSearchFilter = async (request, response, next) => {
 //     .catch((error) => next(error));
 // };
 
-
 //get 4 books
 exports.getCountBook = (request, response, next) => {
   bookSchema
-    .find({}).limit(4)
+    .find({})
+    .limit(4)
     .then((data) => {
-      response.status(200).json( data );
+      response.status(200).json(data);
     })
     .catch((error) => next(error));
 };
