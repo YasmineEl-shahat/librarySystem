@@ -50,7 +50,7 @@ router
 
 router
   .route("/book/return")
-  .post(checkBadminOrAdminOrEmployee, bookOperationController.returnBook);
+  .get(checkBadminOrAdminOrEmployee, bookOperationController.returnBook);
 
 router
   .route("/book/borrow")

@@ -21,8 +21,8 @@ exports.getAllBookOperation = (request, response, next) => {
 exports.getBorrowedBook = (request, response, next) => {
   bookOperation
     .find({ type: "borrow" })
-    .populate({ path: "bookId", select: { title: 1, _id: 0 } })
-    .populate({ path: "memberId", select: { fullName: 1, _id: 0 } })
+    .populate({ path: "bookId", select: { title: 1, _id: 1 } })
+    .populate({ path: "memberId", select: { fullName: 1, _id: 1 } })
     .populate({ path: "employeeId", select: { fname: 1, lname: 1, _id: 0 } })
     .then((data) => {
       response.status(200).json({ data });
@@ -33,8 +33,8 @@ exports.getBorrowedBook = (request, response, next) => {
 exports.getReadingBook = (request, response, next) => {
   bookOperation
     .find({ type: "read" })
-    .populate({ path: "bookId", select: { title: 1, _id: 0 } })
-    .populate({ path: "memberId", select: { fullName: 1, _id: 0 } })
+    .populate({ path: "bookId", select: { title: 1, _id: 1 } })
+    .populate({ path: "memberId", select: { fullName: 1, _id: 1 } })
     .populate({ path: "employeeId", select: { fname: 1, lname: 1, _id: 0 } })
     .then((data) => {
       response.status(200).json({ data });
