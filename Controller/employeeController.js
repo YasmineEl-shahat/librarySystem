@@ -9,13 +9,26 @@ const fs = require("fs");
 const { request } = require("http");
 const { response } = require("express");
 
+const NodeCache = require("node-cache");
+const myCache = new NodeCache({ stdTTL: 10 });
+
 const employeeSchema = mongoose.model("employees");
 
 // get all employe
 exports.getAllEmployee = (request, response, next) => {
+  const key = "AllEmployee";
+  const cachedemp = myCache.get(key);
+  if (cachedemp) {
+    console.log(`Restored From Cache`); 
+    response.setHeader("Cache-Control", "max-age=6*30*24*60");
+    return response.sendStatus(304);
+  }
   employeeSchema
     .find({})
-    .then((data) => response.status(201).json({ data }))
+    .then((data) =>{
+      myCache.set(key, data);
+      response.status(201).json({ data })
+    })
     .catch((error) => next(error));
 };
 

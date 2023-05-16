@@ -15,7 +15,7 @@ exports.getAllAdmins = async (request, response, next) => {
   const key = "AllAdmins";
   const cachedAdmins = myCache.get(key);
   if (cachedAdmins) {
-    console.log(`Restored From Cache`);
+    console.log(`Restored From Cache`); 
     response.setHeader("Cache-Control", "max-age=6*30*24*60");
     return response.sendStatus(304);
   }
