@@ -21,6 +21,9 @@ exports.getAllBookOperation = (request, response, next) => {
 exports.getBorrowedBook = (request, response, next) => {
   bookOperation
     .find({ type: "borrow" })
+    .populate({ path: "bookId", select: { title: 1, _id: 1 } })
+    .populate({ path: "memberId", select: { fullName: 1, _id: 1 } })
+    .populate({ path: "employeeId", select: { fname: 1, lname: 1, _id: 0 } })
     .then((data) => {
       response.status(200).json({ data });
     })
@@ -30,6 +33,9 @@ exports.getBorrowedBook = (request, response, next) => {
 exports.getReadingBook = (request, response, next) => {
   bookOperation
     .find({ type: "read" })
+    .populate({ path: "bookId", select: { title: 1, _id: 1 } })
+    .populate({ path: "memberId", select: { fullName: 1, _id: 1 } })
+    .populate({ path: "employeeId", select: { fname: 1, lname: 1, _id: 0 } })
     .then((data) => {
       response.status(200).json({ data });
     })
@@ -53,6 +59,7 @@ exports.borrowBooks = async (request, response, next) => {
     },
     { return: 1, _id: 0 }
   );
+  console.log(request.body.book_id);
   if (book == null) next(new Error("book not found"));
   if (member == null) next(new Error("member not found"));
   else {
@@ -128,11 +135,11 @@ exports.borrowBooksList = async (request, response, next) => {
       },
       {
         $unwind: "$book",
-      },
+      }, // by id ??
       {
         $project: {
           _id: 0,
-          bookTitle: "$book.title",
+          title: "$book.title",
           auther: "$book.auther",
           publisher: "$book.publisher",
           category: "$book.category",
@@ -147,8 +154,9 @@ exports.borrowBooksList = async (request, response, next) => {
 
 //give books for reading
 exports.readBook = async (request, response, next) => {
-  const book_id = request.query.book_id;
-  const member_id = request.query.member_id;
+  const book_id = request.body.book_id;
+  const member_id = request.body.member_id;
+  console.log(member_id, book_id);
   let book = await bookSchema.findOne(
     { _id: book_id },
     { avilable: 1, numOfCopies: 1, _id: 0 }
@@ -186,18 +194,6 @@ exports.readBook = async (request, response, next) => {
           type: "read",
           return: false,
         }).save();
-        let readedBefore = member.readingBooks.indexOf(book_id) != -1;
-
-        if (!readedBefore) {
-          await memberSchema.updateOne(
-            { _id: member_id },
-            {
-              $push: {
-                readingBooks: book_id,
-              },
-            }
-          );
-        }
         response
           .status(200)
           .json({ message: "reading operation completed successfully" });
@@ -316,7 +312,7 @@ exports.readBooksList = async (request, response, next) => {
       {
         $project: {
           _id: 0,
-          bookTitle: "$book.title",
+          title: "$book.title",
           auther: "$book.auther",
           publisher: "$book.publisher",
           category: "$book.category",
@@ -485,4 +481,62 @@ exports.currentBorrowedBooks = async (request, response, next) => {
       response.status(200).json({ data });
     })
     .catch((error) => next(error));
+};
+
+exports.membersViolatedDate = (request, response, next) => {
+  const today = new Date();
+  today.setDate(today.getDate() - 1);
+  bookOperation
+    .aggregate([
+      {
+        $project: {
+          deadlineDate: 1,
+          return: 1,
+          memberId: 1,
+          type: 1,
+          _id: 0,
+        },
+      },
+      {
+        $match: {
+          deadlineDate: { $lt: today },
+          return: false,
+          type: "borrow",
+        },
+      },
+      {
+        $group: {
+          _id: "$memberId",
+          count: { $count: {} },
+          member: { $push: "$$ROOT" },
+        },
+      },
+      {
+        $lookup: {
+          from: "members",
+          localField: "_id",
+          foreignField: "_id",
+          as: "member",
+        },
+      },
+      {
+        $unwind: "$member",
+      },
+      {
+        $project: {
+          _id: 0,
+          numberOfBooks: "$count",
+          memberId: "$member._id",
+          fullName: "$member.fullName",
+          email: "$member.email",
+          phoneNumber: "$member.phoneNumber",
+        },
+      },
+    ])
+    .then((data) => {
+      response.status(200).json({ data });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

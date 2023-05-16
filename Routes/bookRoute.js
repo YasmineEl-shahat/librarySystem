@@ -24,6 +24,12 @@ router
     validateMW,
     controller.addBook
   )
+  
+
+router
+  .route("/books/:id")
+  .get(checkBadminOrAdminOrEmployee, controller.getBook)
+  .delete(checkBadminOrAdminOrEmployee, controller.deleteBook)
   .patch(
     upload.single("image"),
     checkBadminOrAdminOrEmployee,
@@ -31,11 +37,6 @@ router
     validateMW,
     controller.updateBook
   );
-
-router
-  .route("/books/:id")
-  .get(checkBadminOrAdminOrEmployee, controller.getBook)
-  .delete(checkBadminOrAdminOrEmployee, controller.deleteBook);
   
 router
   .route("/newBooks")
@@ -55,6 +56,10 @@ router
 
 router
   .route("/bookSearchFilter")
-  .get(checkGeneralAuthentication, controller.bookSearchFilter);
+  .post(checkGeneralAuthentication, controller.bookSearchFilter);
+
+router
+  .route("/getCountBook")
+  .get(checkGeneralAuthentication, controller.getCountBook);
 
 module.exports = router;

@@ -30,7 +30,7 @@ exports.getMember = (request, response, next) => {
 exports.getMember = (request, response, next) => {
   MemberSchema.find({ _id: request.params.id })
     .then((data) => {
-      if (data.length == 1) response.status(200).json({ data });
+      if (data.length == 1) response.status(200).json( {data});
       else next(new Error("Member not found"));
     })
     .catch((error) => next(error));
@@ -88,7 +88,7 @@ exports.updateMember = async (request, response, next) => {
       },
       {
         $set: {
-          fullName: request.body.name,
+          fullName: request.body.fullName,
           password: hashUPassword,
           phoneNumber: request.body.phoneNumber,
           birthdate: request.body.birthdate,

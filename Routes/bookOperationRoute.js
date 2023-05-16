@@ -50,7 +50,7 @@ router
 
 router
   .route("/book/return")
-  .post(checkBadminOrAdminOrEmployee, bookOperationController.returnBook);
+  .get(checkBadminOrAdminOrEmployee, bookOperationController.returnBook);
 
 router
   .route("/book/borrow")
@@ -68,8 +68,8 @@ router
     bookOperationController.currentBorrowedBooks
   );
 
-// router
-//   .route("/blockedMembers")
-//   .get(checkBaseAdminOremployee, bookOperationController.blockedMembers);
+router
+  .route("/membersViolatedDate")
+  .get(checkBaseAdminOremployee, bookOperationController.membersViolatedDate);
 
 module.exports = router;

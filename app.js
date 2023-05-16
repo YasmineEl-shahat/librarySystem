@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const fs = require("fs");
-
+const lol = require("./lol");
 const authenticationMW = require("./Core/auth/authenticationMW");
 const activateMW = require("./Core/auth/activateMW.js");
 const loginRoute = require("./Routes/login");
@@ -14,6 +14,8 @@ const memberRoute = require("./Routes/memberRoute");
 const bookRoute = require("./Routes/bookRoute");
 const bookOperationsRoute = require("./Routes/bookOperationRoute");
 const activateRoute = require("./Routes/activateRoute");
+const isActivateRoute = require("./Routes/isActivateRoute");
+
 const reportRoute = require("./Routes/reportRoute");
 const { PORT } = require("./config/env");
 //docs
@@ -42,7 +44,6 @@ mongoose
 server.use(
   cors({
     origin: "*",
-    credentials: true,
   })
 );
 //docs
@@ -66,8 +67,8 @@ const options = {
 const specs = swaggerJSDoc(options);
 server.use("/api", swaggerUI.serve, swaggerUI.setup(specs));
 /////////////
-morgan("tiny");
-morgan(":method :url :status :res[content-length] - :response-time ms");
+// morgan("tiny");
+// morgan(":method :url :status :res[content-length] - :response-time ms");
 
 morgan(function (tokens, request, res) {
   return [
@@ -80,17 +81,21 @@ morgan(function (tokens, request, res) {
     "ms",
   ].join(" ");
 });
-
+morgan("dev");
 server.use(express.json());
 server.use(express.urlencoded({ extended: false }));
-
+server.use(lol);
 // login Route
 server.use(loginRoute);
+server.use(isActivateRoute);
+
 // auth middleware
 server.use(authenticationMW);
+
 server.use(activateRoute);
 
 // isActivate
+
 server.use(activateMW);
 
 // Routes
