@@ -8,13 +8,25 @@ const Mail = require("../helpers/sendingMail");
 const comparePassword = require("../helpers/comparePassword");
 const { DEFAULTPASS } = require("../config/env");
 
+const NodeCache = require("node-cache");
+const myCache = new NodeCache({ stdTTL: 10 });
 //get all admins in system
-exports.getAllAdmins = (request, response, next) => {
-  adminSchema
+exports.getAllAdmins = async (request, response, next) => {
+  const key = "AllAdmins";
+  const cachedAdmins = myCache.get(key);
+  if (cachedAdmins) {
+    console.log(`Restored From Cache`);
+    response.setHeader("Cache-Control", "max-age=6*30*24*60");
+    return response.sendStatus(304);
+  }
+  const admins = await adminSchema
     .find({})
-    .then((data) => response.status(200).json({ data }))
+    .then((data) => {
+      myCache.set(key, data);
+      response.status(200).json({ data });
+    })
     .catch((error) => next(error));
-}; 
+};
 
 //get admin using param
 exports.getAdmin = (request, response, next) => {
@@ -46,7 +58,6 @@ exports.addAdmin = (request, response, next) => {
     })
     .catch((error) => next(error));
 };
-
 
 //update admin using parameters
 exports.updateAdmin = async (request, response, next) => {
