@@ -8,14 +8,25 @@ const { DEFAULTPASS } = require("../config/env");
 const fs = require("fs");
 const { request } = require("http");
 const { response } = require("express");
-
+const NodeCache = require("node-cache");
+const cache = new NodeCache({ stdTTL: 10 });
 const employeeSchema = mongoose.model("employees");
 
 // get all employe
 exports.getAllEmployee = (request, response, next) => {
+  const key = "AllEmps";
+  const cachedEmps = cache.get(key);
+  if (cachedEmps) {
+    console.log(`Restored From Cache`);
+    response.setHeader("Cache-Control", "max-age=40");
+    return response.sendStatus(304);
+  }
   employeeSchema
     .find({})
-    .then((data) => response.status(201).json({ data }))
+    .then((data) => {
+      cache.set(key, data);
+      response.status(201).json({ data });
+    })
     .catch((error) => next(error));
 };
 
